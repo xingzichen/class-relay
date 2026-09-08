@@ -1,12 +1,17 @@
 # 家校信息协同小程序
 
-当前主方案：微信小程序承载身份、孩子关联、通知任务、费用公示和知识库问答；微信订阅消息提供服务提醒；优先验证现有 NAS 与 Cloudflare Tunnel 作为后端。
+当前主方案：微信小程序承载身份、孩子关联、通知任务、课程/值日安排、费用公示和公共知识问答；微信订阅消息提供服务提醒；全部后端采用腾讯云开发 CloudBase（云函数、文档型云数据库、云存储、定时触发器与 CloudBase AI）。
 
-当前交付为方案文档，尚未实现或部署小程序。需求基线日期：2026-09-08。
+产品聚焦通知、作业要求、准备事项、公共解答、待办和日常安排等可复用场景，不承接反馈工单、冲突处理或敏感个案。
+
+当前交付为方案文档及交互原型；原型使用虚构数据和本地模拟交互，尚未实现或部署正式小程序。需求基线日期：2026-09-08。
 
 - [方案文档入口](docs/README.md)
 - [产品需求](docs/requirements.md)
 - [身份与权限](docs/permissions.md)
+- [AI 回复范围与语气红线](docs/ai-response-policy.md)
+- [课程表、值日表与临时调整](docs/schedules.md)
+- [腾讯云能力评估](docs/cloudbase-capability-assessment.md)
 - [技术架构](docs/technical-architecture.md)
 - [费用收取与公示](docs/finance.md)
 - [数据模型与状态](docs/data-model.md)

@@ -1,10 +1,10 @@
 # 数据模型、状态与接口草案
 
-版本 0.2 · 2026-09-08。为设计模型，尚未生成数据库迁移或实现 API。权限以[身份与权限](permissions.md)为准，业务语义以[需求](requirements.md)为准。
+版本 0.3 · 2026-09-08。为设计模型，尚未创建云数据库集合、索引、安全规则或实现云函数。权限以[身份与权限](permissions.md)为准，业务语义以[需求](requirements.md)为准。
 
 ## 1. 实体
 
-所有业务实体使用内部 ID；时间存 UTC；可变协作实体带 `version`。外键、唯一键和状态转换需在数据库或服务端事务内保证。
+所有实体映射为 CloudBase 文档型数据库集合，内部 ID 落为 `_id`，时间存 UTC，可变协作文档带 `version`。显式引用、班级一致性和状态迁移由云函数验证；跨文档原子性由服务端小事务保证，不依赖关系型外键或 SQL。稳定组合键编码/摘要用于唯一文档 ID，重复创建必须事务检查，不无条件覆盖。
 
 | 实体 | 核心字段 | 约束/作用 |
 |---|---|---|
@@ -21,6 +21,9 @@
 | child_links | user_id, student_id, relationship, status, approved_request_id | 每账户孩子一个有效关系；与班级成员资格共同鉴权 |
 | student_groups | id, class_id, name, version, status | 班级共享群组 |
 | student_group_members | group_id, student_id, status | 群组学生唯一；只能包含本班有效学生 |
+| task_templates | class_id, type, category, title_pattern, body, relative_deadline, checklist, reminder_policy, version | 复用通知、作业、准备事项等结构；新建实例时重新选范围和日期 |
+| audience_snapshots | manifest_id, chunks, source_versions, count, digest, status | 发布前 READY，版本冻结后幂等展开 |
+| outbox_events / dispatch_jobs | event_id, task_id, revision, cursor, state, lease_owner, lease_until, attempt_token | 事件持久化与分批恢复 |
 | tasks | id, class_id, type, lifecycle, current_version, completion_round | 通知/采集/待办共用主记录 |
 | task_versions | task_id, version, title, body, deadline, audience_rule, completion_mode, verification_required, allow_late, reminder_policy, authority_level, publisher | 已发布版本不可覆盖，含外部链接设置 |
 | task_targets | task_id, student_id, added_version, removed_version | 发布对象快照与增减历史，不随群组静默变化 |
@@ -34,19 +37,19 @@
 | reminder_plans | completion_source_id, round, schedule_version, next_due, state | 完成/修订会使旧计划失效 |
 | notification_deliveries | task_id, notification_group_id, user_id, target_instance_ids, round, slot_id, channel, status, idempotency_key | 唯一幂等键；记录具体尝试结果与错误码 |
 | subscription_observations | user_id, template_id, observed_choice, observed_at | 授权观测不是无限额度，也不等同于实际剩余次数 |
-| knowledge_entries/versions | class_id, title, body, source, version, status, audience_acl, valid_from/to, authority_level | 版本和可见范围不得丢失 |
+| knowledge_entries/versions | class_id, title, body, source, version, status, audience_acl, ai_eligible, reusable_category, valid_from/to, authority_level | 版本、问答适用标记和可见范围不得丢失 |
 | knowledge_chunks | source_id, source_version, text, acl, embedding_version | 派生索引可重建；查询须校验当前源 |
-| qa_sessions/answers | user_id, child_scope, question, source_versions, answer, model_version | 按需保留问答及出处；不保存全库模型上下文 |
+| qa_jobs/answers | user_id, authorized_scope, kind, source_versions, safe_answer, model_version, policy_version, expires_at | 只处理公共可复用事项；越界输入不存原文，异步结果按用户鉴权 |
 | audit_events | actor_id, action, scope, entity_id, before/after_version, reason, timestamp | 管理、审批、任务和知识变更追加日志 |
 
 ## 2. 关键约束
 
-1. 角色的全局范围键非空，避免 SQL NULL 导致重复全局管理员授权。
+1. 角色使用明确的全局/班级范围键，按账户、角色、范围计算稳定文档 ID，防止重复授权。
 2. `reviewer_id != applicant_id`；审批时复核审批者当前权限和班级，并在事务中条件更新 PENDING。
 3. 同一学生可有多位亲属，同一用户可关联多位学生；重名不影响唯一性。
-4. 完成实例唯一键为 `(completion_source_id, round, student_id, recipient_key)`，学生级实例使用明确非空固定键，避免 NULL 破坏唯一性。
+4. 完成实例唯一键为 `(completion_source_id, round, student_id, recipient_key)`，学生级实例使用明确非空固定键，用于构造确定性文档 ID。
 5. 同一共享完成源的任务完成模式、目标学生、截止和核验策略必须兼容；首版由主采集统一控制，子催办不独立改写。
-6. 发布内容与 outbox 写入同一事务。队列幂等键唯一，API 写入用请求幂等键且校验相同键的请求体一致。
+6. 正式发布版本与 outbox_events 写入同一小事务；收件人/完成实例分批幂等展开。函数命令采用请求幂等键并校验请求体摘要，队列文档 ID 由业务幂等键构造。
 7. 已发布版本不可变；旧链接加载当前版本并可查看有权访问的修订记录。
 8. 学生退出班级、目标移出、关系撤销或账号停用，撤销相应未完成分配和待发记录，不删除已完成审计。
 9. 审批新亲属或重新入班只建立当前开放且有权访问的任务关系，不重放过期通知。
@@ -87,30 +90,34 @@
 
 打开和确认在 inbox/receipt 单独记录，不作为以上发送状态的后续阶段。
 
-## 4. 核心接口边界（拟定）
+## 4. 云函数命令边界（拟定）
 
-| 接口 | 作用 | 必须校验 |
+小程序统一通过 `wx.cloud.callFunction({name, data: {action, payload, requestId}})` 调用受限入口。下表是函数名与允许 action，不是自建 HTTP 路由；所有身份取可信微信调用上下文。
+
+| 云函数 / action | 作用 | 必须校验 |
 |---|---|---|
-| POST /auth/wechat | 登录换业务会话 | 微信验证结果，不能信任客户端身份字段 |
-| POST /join-applications | 入班和多角色申请 | 邀请/班级范围，角色未自动生效 |
-| POST /role-applications/:id/review | 审批身份 | 授予权限、禁止自审、申请版本 |
-| POST /admin-grants | 设置管理员账户及能力 | 赋权者范围和能力上限 |
-| POST/PATCH /classes/:id/students | 管理学生 | 本班学生管理权限、版本冲突 |
-| POST /child-link-requests | 提交孩子关联 | 本人身份、班级、最少必要匹配信息 |
-| POST /child-link-requests/:id/review | 审批关联 | 家委会及以上已授权角色、本班、非本人 |
-| POST /classes/:id/groups | 创建学生群组 | 管理权限和学生归属 |
-| POST /tasks/preview | 预览范围与收件人数量 | 发布权限、范围快照版本 |
-| POST /tasks/:id/publish | 发布 | 发布权限、预览版本、幂等键 |
-| POST /tasks/:id/revisions | 修订/重新确认 | 内容层级、当前版本、显式轮次变更 |
-| POST /tasks/:id/cancel | 取消任务 | 内容管理权限，同事务取消队列 |
-| POST /completion-instances/:id/complete | 亲属点击完成/已填写 | 本人有效关联、当前轮次、开放状态 |
-| POST /completion-instances/:id/review | 核验/退回/代登记 | 管理权限、操作类型、原因 |
-| GET /tasks/:id/report | 查看统计 | 本班管理权限，亲属只读自己孩子摘要 |
-| POST /knowledge/:id/versions | 维护知识 | 管理权限、来源和可见范围 |
-| POST /qa/ask | 基于知识回答 | 当前用户及孩子授权范围 |
-| GET /files/:id | 附件/来源下载 | 所属任务或知识的当前访问权限 |
+| identity / bootstrapUser | 解析微信身份并建立业务用户 | 可信 APPID/OPENID，不信任客户端身份 |
+| membership / apply | 入班和多角色申请 | 班级范围、角色不自动生效 |
+| membership / reviewRole | 审批身份 | 授权范围、禁止自审、版本 |
+| membership / grantAdmin | 委托管理员能力 | 赋权上限及范围 |
+| students / save | 学生名册维护 | 本班权限、版本 |
+| family / applyLink, reviewLink | 关联申请及审批 | 对应角色、本班、非本人审批 |
+| groups / save | 学生群组 | 管理权限、学生归属 |
+| tasks / saveTemplate, instantiate | 保存并复用模板 | 管理权限、新实例重新选日期与范围 |
+| tasks / preview, publish | 范围预览与发布 | 冻结快照 READY、权限、幂等 |
+| tasks / revise, cancel | 修订或取消 | 内容层级、版本；主状态立即失效，队列异步清理 |
+| completion / complete | 亲属完成或自报已填写 | 有效关联、轮次、开放状态 |
+| completion / review | 核验/退回/代登记 | 管理权限、原因 |
+| tasks / report | 统计 | 管理范围或自己孩子摘要 |
+| knowledge / saveVersion | 管理公共知识版本 | 来源、可见范围、公共可复用标记 |
+| qa / ask, getResult | 公共事项问答 | 用户权限、业务白名单、回复红线及作业归属 |
+| files / prepareUpload, finalizeUpload, authorizeRead | 受控文件访问 | 路径/元数据/对象权限，不接受任意 fileID 授权 |
 
-未列出的列表、撤销、归档接口在实施时补齐，必须沿用同一鉴权和版本规范，不新增隐式权限。
+内部函数 `dispatchWorker`、`reminderScheduler`、`financePublisher`、`maintenance` 只接受受信触发器或服务角色调用，不接受客户端伪造内部身份。长期作业由数据库保存游标、租约与重试状态。
+
+必要查询索引包括：成员 user_id/class_id/status、学生 class_id/status、任务 class_id/lifecycle、关系 user_id/student_id/status、计划 state/next_due、作业 state/lease_until、知识 class_id/status/keyword、账本 class_id/ledger_revision。具体复合索引和查询分页在实施中验证；事务内按明确 doc ID 操作，查候选后重新校验版本。
+
+未列出的列表、撤销和归档命令须沿用同一鉴权规范，不新增反馈工单或争议处理接口。
 
 ## 5. 统计口径
 
@@ -120,6 +127,10 @@
 
 ## 6. 费用扩展
 
-费用实体、整数分金额、凭证、收款分配、冲正、对账、公示版本以[费用规范](finance.md)为唯一详细定义。普通 completion_instances 不作为缴费到账事实，费用 publication 使用专用班内可见范围。费用发布、复核、入账和公示快照需事务一致；客户端不得提交可信余额或直接修改账本。
+费用实体、整数分金额、凭证、收款分配、冲正、对账、公示版本以[费用规范](finance.md)为唯一详细定义。普通 completion_instances 不作为缴费到账事实，费用 publication 使用专用班内可见范围。费用复核、账本与新修订事件以小事务一致保存；整班公示异步按确定版本生成，校验后原子切换完整快照。客户端不得提交可信余额或直接修改账本。
 
-拟增接口组：`/fee-projects`（费用事项/分摊）、`/payment-claims`（家长申报）、`/cash-records`（实际收支登记）、`/cash-records/:id/review`（非本人复核入账）、`/ledger-reversals`（冲正）、`/reconciliations`（对账）、`/finance-publications`（班内公示）。每组执行费用权限、班级范围、版本和幂等校验；第一版无发起实际付款的 API。
+拟增云函数命令：`finance / saveProject, adjustAssessment, submitClaim, saveCashRecord, reviewRecord, reverseEntry, reconcile, getPublication`。每项检查费用权限、班级、版本和幂等；第一版无实际付款或退款命令，无账目争议工单。
+
+## 7. 课程与值日扩展
+
+集合、基础表、日期例外、调整修订、双方一致性与提醒联动以[课程与值日规范](schedules.md)为准。云函数 `schedules` 按同一发布修订读取当前有效安排；与任务的关联使用稳定事件 ID，不仅存节次文本。
