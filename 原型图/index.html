@@ -1,0 +1,1507 @@
+<!doctype html>
+<html lang="en" data-visualize-standalone>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>家校日常小程序 Web 原型</title>
+<style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255), rgb(24 24 24))}html,body{margin:0}body{box-sizing:border-box;padding:1rem;background:inherit}iframe{display:block;width:100%;height:calc(100vh - 2rem);margin:0 auto;border:0}</style>
+</head>
+<body>
+<iframe sandbox="allow-scripts" referrerpolicy="no-referrer" title="家校日常小程序 Web 原型" srcdoc="&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot; data-visualize-standalone&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;meta name=&quot;referrer&quot; content=&quot;no-referrer&quot;&gt;
+&lt;meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src &#x27;none&#x27;; script-src &#x27;unsafe-inline&#x27; &#x27;unsafe-eval&#x27; &#x27;wasm-unsafe-eval&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src &#x27;unsafe-inline&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;none&#x27;&quot;&gt;
+&lt;title&gt;家校日常小程序 Web 原型&lt;/title&gt;
+&lt;style&gt;:root {
+  color-scheme: light dark;
+  background-color: var(
+    --background,
+    var(--color-background-primary, light-dark(rgb(255 255 255), rgb(24 24 24)))
+  ) !important;
+
+  /* Agent-facing contract; keep in sync with SKILL.md. */
+  --background: var(
+    --color-background-primary,
+    light-dark(rgb(255 255 255), rgb(24 24 24))
+  );
+  --foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --card: color-mix(in oklab, var(--foreground) 5%, var(--background));
+  --card-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --popover: var(
+    --color-background-secondary,
+    light-dark(rgb(255 255 255), rgb(45 45 45))
+  );
+  --popover-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --primary: var(
+    --color-text-info,
+    light-dark(rgb(51 156 255), rgb(131 195 255))
+  );
+  --primary-foreground: var(
+    --color-text-inverse,
+    light-dark(rgb(255 255 255), rgb(13 13 13))
+  );
+  --secondary: var(
+    --color-background-secondary,
+    light-dark(rgb(255 255 255 / 96%), rgb(54 54 54 / 96%))
+  );
+  --secondary-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --muted: color-mix(in srgb, var(--foreground) 10%, transparent);
+  --muted-foreground: var(
+    --color-text-secondary,
+    light-dark(rgb(26 28 31 / 49.4%), rgb(255 255 255 / 49.8%))
+  );
+  --accent: var(
+    --color-background-info,
+    light-dark(rgb(229 242 255), rgb(13 39 63))
+  );
+  --accent-foreground: var(
+    --color-text-info,
+    light-dark(rgb(51 156 255), rgb(131 195 255))
+  );
+  --destructive: var(
+    --color-text-warning,
+    light-dark(rgb(226 85 7), rgb(255 133 73))
+  );
+  --border: var(
+    --color-border-secondary,
+    light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%))
+  );
+  --input: var(
+    --color-border-primary,
+    light-dark(
+      rgb(26 28 31 / 11.8%),
+      color-mix(in oklab, rgb(0 0 0) 10%, transparent)
+    )
+  );
+  --ring: var(
+    --color-ring-primary,
+    light-dark(rgb(51 156 255), rgb(131 195 255 / 76%))
+  );
+  --font-size-base: var(--font-text-md-size, 14px);
+  --blue: light-dark(rgb(51 156 255), rgb(51 156 255));
+  --orange: light-dark(rgb(226 85 7), rgb(251 106 34));
+  --green: light-dark(rgb(0 162 64), rgb(64 201 119));
+  --red: light-dark(rgb(224 46 42), rgb(255 103 100));
+  --purple: light-dark(rgb(146 79 247), rgb(173 123 249));
+  --yellow: light-dark(rgb(255 195 0), rgb(255 210 64));
+  --viz-series-1: var(--primary);
+  --viz-series-2: light-dark(rgb(243 136 59), rgb(245 154 86));
+  --viz-series-3: light-dark(rgb(93 201 119), rgb(116 213 139));
+  --viz-series-4: light-dark(rgb(235 119 177), rgb(240 143 192));
+  --viz-series-5: light-dark(rgb(155 121 236), rgb(170 145 239));
+  --viz-series-6: light-dark(rgb(58 185 177), rgb(90 203 194));
+
+  /* Internal implementation variables; not part of the agent contract. */
+  --font-sans: -apple-system, system-ui, &quot;Segoe UI&quot;, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, &quot;SF Mono&quot;, Menlo, Consolas, &quot;Liberation Mono&quot;,
+    monospace;
+  --font-size-normal: max(11px, var(--font-size-base));
+  --font-size-tooltip: calc(var(--font-size-base) - 1px);
+  --font-size-small: max(11px, calc(var(--font-size-base) - 2px));
+  --font-size-h1: calc(var(--font-size-normal) * 1.7142857143);
+  --font-size-h2: calc(var(--font-size-normal) * 1.4285714286);
+  --font-size-h3: calc(var(--font-size-normal) * 1.2857142857);
+  --font-weight-normal: 430;
+  --font-weight-medium: 500;
+  --icon-size: 16px;
+  --line-height-normal: calc(var(--font-size-normal) * 1.5);
+  --line-height-tooltip: calc(var(--font-size-tooltip) * 1.4285714286);
+  --line-height-small: calc(var(--font-size-small) + 4px);
+  --corner-shape: round;
+  --radius: var(--border-radius-lg, 10px);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-2xl: calc(var(--radius) * 1.6);
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px -1px rgb(0 0 0 / 8%);
+  --checkmark-image: url(&quot;data:image/svg+xml,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; viewBox=&#x27;0 0 17 17&#x27;%3E%3Cpath d=&#x27;M12.8961 3.64101C13.1297 3.41418 13.4984 3.37523 13.7779 3.56581C14.0571 3.75635 14.1554 4.11331 14.0299 4.41347L13.9615 4.53847L7.71151 13.7045C7.59411 13.8767 7.4063 13.9877 7.19881 14.0072C6.99136 14.0267 6.78564 13.9533 6.63826 13.806L2.88826 10.056L2.79842 9.9457C2.6192 9.67407 2.64927 9.30496 2.88826 9.06581C3.12738 8.82669 3.49647 8.79676 3.76815 8.97597L3.8785 9.06581L7.03084 12.2182L12.8053 3.74941L12.8961 3.64101Z&#x27;/%3E%3C/svg%3E&quot;);
+
+  /* Legacy aliases; not part of the current agent contract. */
+  --viz-bg: transparent;
+  --viz-panel: var(--card);
+  --viz-border: var(--border);
+  --viz-text: var(--foreground);
+  --viz-muted: var(--muted-foreground);
+  --viz-accent: var(--primary);
+  --viz-accent-text: var(--primary-foreground);
+  --viz-accent-bg: var(--accent);
+  --viz-font-size: var(--font-size-base);
+  --viz-warning: var(--destructive);
+}
+
+:root[data-theme=&quot;light&quot;] {
+  color-scheme: light;
+}
+
+:root[data-theme=&quot;dark&quot;] {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html &gt; body {
+  /* Preserve MCP aliases for older inline renderers without creating :root cycles. */
+  --color-background-primary: var(
+    --background,
+    light-dark(rgb(255 255 255), rgb(24 24 24))
+  );
+  --color-text-primary: var(
+    --foreground,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --color-border-secondary: var(
+    --border,
+    light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%))
+  );
+
+  margin: 0;
+  padding: var(--visualize-paint-gutter, 0px);
+  color: var(--foreground);
+  background: transparent !important;
+  font-family: var(--font-sans) !important;
+  font-size: var(--font-size-normal);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+}
+
+a {
+  color: color-mix(in srgb, var(--viz-accent) 80%, var(--viz-text) 20%);
+  cursor: pointer;
+  font-weight: var(--font-weight-medium, 500);
+  text-decoration: none;
+  text-underline-offset: 2px;
+}
+
+a:is(:hover, :focus-visible) {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 0.5px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-block: 0;
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.3;
+}
+
+b,
+strong,
+th {
+  font-weight: var(--font-weight-medium);
+}
+
+code:not(pre code) {
+  display: inline;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  corner-shape: var(--corner-shape);
+  background: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  word-break: break-word;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--foreground);
+  font: inherit;
+  text-align: start;
+}
+
+.table :is(th, td) {
+  padding-block: 10px;
+  padding-inline: 0 24px;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid var(--border);
+  text-align: start;
+  vertical-align: top;
+}
+
+.table-responsive &gt; .table :is(th, td) {
+  overflow-wrap: break-word;
+}
+
+.table :is(th, td):last-child {
+  padding-inline-end: 0;
+}
+
+.table :is(caption, thead th) {
+  font-weight: 600;
+}
+
+.table thead th {
+  padding-block: 8px;
+  border-bottom-color: color-mix(in srgb, var(--foreground) 16%, transparent);
+}
+
+.table tbody tr:last-child :is(th, td) {
+  border-bottom: 0;
+}
+
+.table.table-sm :is(th, td) {
+  padding-block: 6px;
+}
+
+.table.table-sm :is(th, td):not(:last-child) {
+  padding-inline-end: 16px;
+}
+
+.table :is(.text-end, [align=&quot;right&quot;]) {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.table :is(.text-center, [align=&quot;center&quot;]) {
+  text-align: center;
+}
+
+.table .text-nowrap {
+  white-space: nowrap;
+}
+
+#widget {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  background: transparent !important;
+}
+
+.card {
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  border-radius: var(--radius-2xl);
+  corner-shape: var(--corner-shape);
+  color: var(--card-foreground);
+  background: var(--card);
+}
+
+#widget &gt; :not(.card, .progress) {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  width: max-content;
+  max-width: min(
+    20rem,
+    var(--tooltip-available-width, calc(100vw - 10px)),
+    calc(100vw - 10px)
+  );
+  max-height: min(
+    var(--tooltip-available-height, calc(100vh - 10px)),
+    calc(100vh - 10px)
+  );
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  corner-shape: var(--corner-shape);
+  color: var(--popover-foreground);
+  background: var(--popover);
+  box-shadow: none;
+  font-size: var(--font-size-tooltip);
+  line-height: var(--line-height-tooltip);
+  overflow-wrap: break-word;
+  white-space: normal;
+  pointer-events: none;
+  user-select: none;
+}
+
+.viz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(max(180px, 24%), 1fr));
+  gap: 10px;
+}
+
+.viz-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.viz-stat-value {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+.viz-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+hr {
+  width: 100%;
+  height: 1px;
+  margin-block: 6px;
+  border: 0;
+  background: var(--border);
+}
+
+.nav {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 4px;
+}
+
+.progress {
+  display: flex;
+  height: 8px;
+  margin-block: calc((var(--line-height-normal, 1.5em) - 8px) / 2);
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+}
+
+.progress-bar:only-child {
+  border-radius: var(--radius-full);
+}
+
+.progress-bar {
+  height: 100%;
+  flex-shrink: 0;
+  border: 0;
+  background: var(--viz-series-1);
+}
+
+.viz-badge {
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  color: var(--accent-foreground);
+  background: var(--accent);
+  font-weight: var(--font-weight-medium);
+}
+
+small,
+.text-small,
+.viz-badge {
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}
+
+.text-muted {
+  color: var(--muted-foreground);
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.viz-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.viz-controls &gt; .form-label {
+  display: grid;
+  min-width: min(100%, 260px);
+  flex: 1 1 280px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 2px 12px;
+  margin-bottom: 0;
+}
+
+.viz-controls &gt; .form-label &gt; :is(.form-control, .form-range, .form-select) {
+  grid-column: 1 / -1;
+}
+
+.btn,
+.nav-link,
+.form-check-input,
+.form-control,
+.form-range,
+.form-select {
+  font: inherit;
+}
+
+.btn,
+.nav-link {
+  appearance: button;
+  display: inline-flex;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0 8px;
+  -webkit-app-region: no-drag;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: var(--corner-shape);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: var(--cursor-interaction, pointer);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.btn:is(.btn-block, .viz-tile) {
+  inline-size: 100%;
+}
+
+.btn.viz-tile {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+a.btn {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:not(:disabled):hover,
+.nav-link:not(:disabled):not([aria-disabled=&quot;true&quot;]):hover {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn-primary {
+  border-color: transparent;
+  color: var(--primary-foreground);
+  background: var(--foreground);
+  background-clip: padding-box;
+}
+
+.btn-primary .text-muted {
+  color: color-mix(in srgb, var(--primary-foreground) 50%, transparent);
+}
+
+.btn-primary:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 80%, transparent);
+  background-clip: padding-box;
+}
+
+.btn-ghost {
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.btn-ghost:not(:disabled):hover {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.nav-pills .nav-link {
+  min-width: 0;
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.nav-justified .nav-link {
+  flex: 1 1 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.nav-pills .nav-link.active {
+  color: var(--foreground);
+  background: var(--muted);
+}
+
+.btn:disabled,
+.nav-link:disabled,
+.nav-link[aria-disabled=&quot;true&quot;] {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+[data-lucide] {
+  stroke-width: 1.6;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--foreground);
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  padding: 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: var(--corner-shape);
+  color: var(--foreground);
+  background: var(--secondary);
+}
+
+.form-control::placeholder {
+  color: var(--muted-foreground);
+}
+
+.form-control[type=&quot;file&quot;] {
+  padding: 0;
+  overflow: hidden;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control[type=&quot;file&quot;]::file-selector-button {
+  min-height: 26px;
+  margin-right: 8px;
+  padding: 0 8px;
+  border: 0;
+  border-right: 1px solid var(--input);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: inherit;
+  font: inherit;
+}
+
+.form-control[type=&quot;file&quot;]:not(:disabled):hover::file-selector-button {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-control-color[type=&quot;color&quot;] {
+  width: 40px;
+  height: 28px;
+  padding: 3px;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch {
+  border: 0;
+  border-radius: calc(var(--radius-lg) - 4px);
+  corner-shape: var(--corner-shape);
+}
+
+textarea.form-control {
+  height: auto;
+  min-height: 72px;
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.form-control:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.form-select {
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  margin: 0;
+  padding: 0 32px 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: var(--corner-shape);
+  color: var(--foreground);
+  background-color: var(--secondary);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%),
+    linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 50%,
+    calc(100% - 10px) 50%;
+  background-repeat: no-repeat;
+  background-size: 4px 4px;
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-select:not(:disabled):hover {
+  background-color: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-select:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-check {
+  display: flex;
+  min-height: 20px;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-check-input {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  margin: 0;
+  border: 1px solid var(--input);
+  color: var(--primary-foreground);
+  background-color: transparent;
+  cursor: var(--cursor-interaction, default);
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    box-shadow 150ms;
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;] {
+  border-color: var(--input);
+  border-radius: var(--radius-sm);
+  corner-shape: var(--corner-shape);
+  background-color: var(--secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input:not(:disabled):not(:checked):hover {
+  background-color: var(--card);
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;]:checked {
+  border-color: var(--primary);
+  background-color: var(--primary);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input[type=&quot;checkbox&quot;]:checked::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-foreground);
+  content: &quot;&quot;;
+  mask: var(--checkmark-image) center / 12px 12px no-repeat;
+}
+
+.form-check-input[type=&quot;radio&quot;] {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+}
+
+.form-check-input[type=&quot;radio&quot;]:checked {
+  border: 2px solid var(--primary);
+  background:
+    radial-gradient(circle, var(--primary-foreground) 0 2.5px, transparent 3px),
+    var(--primary);
+}
+
+.form-check:not(.form-switch) .form-check-input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+}
+
+.form-switch .form-check-input:disabled,
+.form-switch .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-check-label {
+  color: var(--foreground);
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-switch .form-check-input {
+  position: relative;
+  width: 32px;
+  height: 20px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+  box-shadow: none;
+  transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  border: 1px solid light-dark(var(--primary-foreground), var(--foreground));
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+  box-shadow: var(--shadow-sm);
+  content: &quot;&quot;;
+  transform: translate(2px, -50%);
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input:checked {
+  background: var(--primary);
+}
+
+.form-switch .form-check-input:checked::before {
+  transform: translate(14px, -50%);
+}
+
+.form-switch .form-check-input:focus-visible {
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.form-range {
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 28px;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  border: 0;
+  accent-color: var(--primary);
+  background: linear-gradient(
+      color-mix(in srgb, var(--foreground) 7%, transparent),
+      color-mix(in srgb, var(--foreground) 7%, transparent)
+    )
+    center / 100% 2px no-repeat;
+}
+
+.form-range::-webkit-slider-runnable-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-webkit-slider-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range::-moz-range-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-moz-range-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.btn:not(.btn-primary, .viz-tile):is(
+  [aria-pressed=&quot;true&quot;],
+  [aria-selected=&quot;true&quot;],
+  .is-selected
+) {
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+  background: var(--primary);
+}
+
+.btn.viz-tile:is([aria-pressed=&quot;true&quot;], [aria-selected=&quot;true&quot;], .is-selected) {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.btn:focus-visible,
+.nav-link:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+@media (pointer: coarse) {
+  .btn,
+  .nav-link,
+  .form-control,
+  .form-select {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Keep small-screen WebKit from zooming when a text field receives focus. */
+  .form-control,
+  .form-select {
+    font-size: max(16px, var(--font-size-normal));
+  }
+
+  .form-control[type=&quot;file&quot;]::file-selector-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .form-control-color[type=&quot;color&quot;] {
+    width: 44px;
+    height: 44px;
+  }
+
+  .form-control:is(
+    [type=&quot;date&quot;],
+    [type=&quot;datetime-local&quot;],
+    [type=&quot;month&quot;],
+    [type=&quot;time&quot;],
+    [type=&quot;week&quot;]
+  ) {
+    min-width: 0;
+    max-width: 100%;
+    padding-block: 8px;
+  }
+
+  .form-check {
+    min-height: 44px;
+    padding-inline: 15px;
+  }
+
+  .form-check-input {
+    position: relative;
+  }
+
+  .form-check-input::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 44px;
+    height: 44px;
+    content: &quot;&quot;;
+    transform: translate(-50%, -50%);
+  }
+
+  .form-check-label {
+    display: inline-flex;
+    min-width: 44px;
+    min-height: 44px;
+    align-items: center;
+  }
+
+  .form-range {
+    height: 44px;
+    touch-action: pan-y;
+  }
+
+  .form-range::-webkit-slider-runnable-track {
+    height: 44px;
+  }
+
+  .form-range::-moz-range-track {
+    height: 44px;
+  }
+
+  .form-range::-webkit-slider-thumb {
+    margin-top: 12px;
+  }
+}
+
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+#widget &gt; svg {
+  width: 100%;
+}
+
+/* Model-authored chart rules can otherwise stretch icons after these styles load. */
+svg.lucide {
+  display: block;
+  width: var(--icon-size) !important;
+  height: var(--icon-size) !important;
+  flex: none;
+  margin: 0 !important;
+  stroke-width: 1.6;
+}
+
+.text-warning,
+.text-destructive {
+  color: var(--destructive);
+}
+
+html&gt;body{padding:0}&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;classroom-miniapp&quot; aria-label=&quot;家校日常小程序原型&quot;&gt;
+&lt;style&gt;
+#classroom-miniapp{--sc-bg:light-dark(#f3f5f1,#15211d);--sc-paper:light-dark(#fff,#21312a);--sc-text:light-dark(#20382e,#e5f0e8);--sc-muted:light-dark(#65786c,#aabbaf);--sc-line:light-dark(#e1e8df,#3e5046);--sc-accent:light-dark(#28644d,#9bd8b4);--sc-on:light-dark(#fff,#143a27);--sc-soft:light-dark(#e8f1e9,#2d4435);--sc-warm:light-dark(#866029,#e2bd7d);--sc-warm-bg:light-dark(#faf1df,#413826);--sc-radius:18px;font-family:-apple-system,BlinkMacSystemFont,&quot;PingFang SC&quot;,&quot;Microsoft YaHei&quot;,sans-serif;color:var(--sc-text);font-size:14px;line-height:1.55;max-width:440px;margin:auto}
+#classroom-miniapp *{box-sizing:border-box}#classroom-miniapp button,#classroom-miniapp input,#classroom-miniapp select,#classroom-miniapp textarea{font:inherit;color:inherit}#classroom-miniapp button{cursor:pointer}#classroom-miniapp .sc-labelbar{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--sc-muted);font-size:12px;padding:0 4px 10px}#classroom-miniapp .sc-phone{background:var(--sc-bg);border:1px solid var(--sc-line);border-radius:28px;overflow:hidden}#classroom-miniapp .sc-head{background:var(--sc-paper);padding:18px 20px 14px;border-bottom:1px solid var(--sc-line)}#classroom-miniapp .sc-top{display:flex;align-items:center;justify-content:space-between;gap:12px}#classroom-miniapp .sc-brand{display:flex;align-items:center;gap:8px;font-size:18px;font-weight:500}#classroom-miniapp .sc-brandmark{background:var(--sc-accent);color:var(--sc-on);padding:7px;border-radius:12px;display:flex}#classroom-miniapp .sc-wechat{border:1px solid var(--sc-line);border-radius:20px;padding:1px 12px;letter-spacing:4px;font-size:17px}#classroom-miniapp .sc-subhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:13px}#classroom-miniapp .sc-subhead span{font-size:12px;color:var(--sc-muted)}#classroom-miniapp select{background:var(--sc-paper);border:1px solid var(--sc-line);border-radius:9px;padding:7px;max-width:100%;font-size:13px}#classroom-miniapp .sc-main{padding:20px;min-height:560px}#classroom-miniapp h2{font-size:23px;line-height:1.3;font-weight:500;margin:0 0 6px}#classroom-miniapp h3{font-size:16px;font-weight:500;margin:0}#classroom-miniapp p{margin:6px 0 0}#classroom-miniapp .sc-muted{color:var(--sc-muted);font-size:12px}#classroom-miniapp .sc-title{margin-bottom:18px}#classroom-miniapp .sc-row{display:flex;align-items:center;justify-content:space-between;gap:10px}#classroom-miniapp .sc-stack{display:grid;gap:12px}#classroom-miniapp .sc-surface{background:var(--sc-paper);border-radius:var(--sc-radius);padding:16px;border:1px solid var(--sc-line)}#classroom-miniapp .sc-hero{background:var(--sc-accent);color:var(--sc-on);border:0}#classroom-miniapp .sc-hero .sc-muted{color:inherit;opacity:.85}#classroom-miniapp .sc-hero strong{font-size:30px;font-weight:500}#classroom-miniapp .sc-hero button{display:inline-flex;align-items:center;gap:7px;background:var(--sc-on);color:var(--sc-accent);border:0;padding:9px 14px;border-radius:11px}#classroom-miniapp .sc-badge{display:inline-block;border-radius:6px;padding:3px 7px;background:var(--sc-soft);color:var(--sc-accent);font-size:11px;white-space:nowrap}#classroom-miniapp .sc-badge.warm{background:var(--sc-warm-bg);color:var(--sc-warm)}#classroom-miniapp .sc-section{margin:20px 0 10px;display:flex;align-items:center;justify-content:space-between}#classroom-miniapp .sc-link{border:0;background:transparent;color:var(--sc-accent);padding:5px 0;font-size:12px}#classroom-miniapp .sc-item{width:100%;display:flex;align-items:flex-start;gap:12px;text-align:left;border:0;background:transparent;padding:13px 0;border-bottom:1px solid var(--sc-line)}#classroom-miniapp .sc-item:last-child{border-bottom:0;padding-bottom:0}#classroom-miniapp .sc-item:first-child{padding-top:0}#classroom-miniapp .sc-item .sc-grow{flex:1;min-width:0}#classroom-miniapp .sc-glyph{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:11px;background:var(--sc-soft);color:var(--sc-accent);flex:none}#classroom-miniapp .sc-quick{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}#classroom-miniapp .sc-quick button{border:1px solid var(--sc-line);border-radius:var(--sc-radius);background:var(--sc-paper);padding:16px 4px 12px;display:grid;justify-items:center;gap:8px;font-size:12px}#classroom-miniapp .sc-quick button i{color:var(--sc-accent)}#classroom-miniapp .sc-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;background:var(--sc-accent);color:var(--sc-on);border:1px solid transparent;border-radius:11px;padding:11px 15px;font-weight:500}#classroom-miniapp .sc-btn.secondary{background:var(--sc-paper);color:var(--sc-accent);border-color:var(--sc-line)}#classroom-miniapp .sc-btn.full{width:100%}#classroom-miniapp button:disabled{opacity:.55;cursor:default}#classroom-miniapp .sc-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}#classroom-miniapp .sc-actions&gt;*{flex:1}#classroom-miniapp .sc-nav{display:grid;grid-template-columns:repeat(5,1fr);background:var(--sc-paper);border-top:1px solid var(--sc-line);padding:10px 6px 12px}#classroom-miniapp .sc-nav button{border:0;background:transparent;padding:7px 1px 4px;display:grid;justify-items:center;gap:4px;font-size:11px;color:var(--sc-muted)}#classroom-miniapp .sc-nav button[aria-current=page]{color:var(--sc-accent);font-weight:500}#classroom-miniapp .sc-tabs{display:flex;gap:5px;background:var(--sc-soft);padding:4px;border-radius:11px;margin:14px 0}#classroom-miniapp .sc-tabs button{flex:1;background:transparent;border:0;border-radius:8px;padding:8px 3px;font-size:12px}#classroom-miniapp .sc-tabs button[aria-pressed=true]{background:var(--sc-paper);color:var(--sc-accent)}#classroom-miniapp .sc-days{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}#classroom-miniapp .sc-days button{background:var(--sc-paper);border:1px solid var(--sc-line);border-radius:12px;padding:8px 3px;font-size:12px}#classroom-miniapp .sc-days button[aria-pressed=true]{border-color:var(--sc-accent);background:var(--sc-soft);color:var(--sc-accent)}#classroom-miniapp .sc-timeline{display:grid;grid-template-columns:56px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--sc-line)}#classroom-miniapp .sc-timeline:last-child{border:0}#classroom-miniapp .sc-time{font-size:12px;color:var(--sc-muted);font-variant-numeric:tabular-nums}#classroom-miniapp .sc-timeline.changed{color:var(--sc-accent)}#classroom-miniapp .sc-note{padding:12px 14px;border-radius:12px;background:var(--sc-warm-bg);color:var(--sc-warm);font-size:12px}#classroom-miniapp .sc-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:14px 18px}#classroom-miniapp .sc-stats strong{display:block;font-size:22px;font-weight:500;font-variant-numeric:tabular-nums}#classroom-miniapp .sc-stats label{color:var(--sc-muted);font-size:12px}#classroom-miniapp table{width:100%;border-collapse:collapse;font-size:12px}#classroom-miniapp th{text-align:left;font-weight:400;color:var(--sc-muted)}#classroom-miniapp th,#classroom-miniapp td{padding:10px 3px;border-bottom:1px solid var(--sc-line)}#classroom-miniapp td:nth-child(2),#classroom-miniapp td:nth-child(3){font-variant-numeric:tabular-nums;text-align:right}#classroom-miniapp .sc-fields{display:grid;gap:14px}#classroom-miniapp .sc-field{display:grid;gap:6px;font-size:12px}#classroom-miniapp .sc-field input,#classroom-miniapp .sc-field textarea,#classroom-miniapp .sc-field select{width:100%;border:1px solid var(--sc-line);border-radius:10px;padding:10px;background:var(--sc-paper);font-size:16px;min-width:0}#classroom-miniapp .sc-field textarea{resize:vertical;min-height:84px}#classroom-miniapp .sc-check{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid var(--sc-line);border-radius:11px;background:var(--sc-paper)}#classroom-miniapp .sc-check input{accent-color:var(--sc-accent);width:17px;height:17px;flex:none}#classroom-miniapp .sc-back{background:transparent;border:0;padding:0 0 12px;color:var(--sc-accent);display:flex;align-items:center;gap:5px;font-size:12px}#classroom-miniapp .sc-chat{background:var(--sc-paper);padding:17px;border-radius:var(--sc-radius);border:1px solid var(--sc-line);margin:12px 0}#classroom-miniapp .sc-chat.user{background:var(--sc-soft);margin-left:34px}#classroom-miniapp .sc-chat p{font-size:14px}#classroom-miniapp .sc-suggestions{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}#classroom-miniapp .sc-suggestions button{background:var(--sc-paper);border:1px solid var(--sc-line);border-radius:18px;padding:8px 12px;font-size:12px}#classroom-miniapp .sc-avatar{width:42px;height:42px;background:var(--sc-soft);color:var(--sc-accent);display:flex;align-items:center;justify-content:center;border-radius:14px;font-size:18px;flex:none}#classroom-miniapp .sc-between{display:flex;gap:10px;justify-content:space-between;align-items:flex-start}#classroom-miniapp .sc-toast{padding:11px 16px;background:var(--sc-soft);color:var(--sc-accent);font-size:12px;border-top:1px solid var(--sc-line)}#classroom-miniapp .sc-hidden{display:none}#classroom-miniapp .sc-amount{font-variant-numeric:tabular-nums}#classroom-miniapp .sc-plainlist{margin:12px 0;padding-left:21px}#classroom-miniapp .sc-plainlist li{margin:7px 0}#classroom-miniapp .sc-managegrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}#classroom-miniapp .sc-managegrid button{padding:17px;text-align:left;display:grid;gap:8px;border:1px solid var(--sc-line);border-radius:var(--sc-radius);background:var(--sc-paper)}#classroom-miniapp .sc-managegrid button i{color:var(--sc-accent)}#classroom-miniapp .sc-spacer{height:14px}#classroom-miniapp .sc-dangerfree{border-left:3px solid var(--sc-accent);padding-left:12px;margin:14px 0}#classroom-miniapp .sc-meter{height:6px;border-radius:5px;background:var(--sc-soft);margin-top:14px;overflow:hidden}#classroom-miniapp .sc-meter span{display:block;height:100%;background:var(--sc-accent);width:95%}@media(max-width:370px){#classroom-miniapp .sc-main{padding:15px}#classroom-miniapp .sc-head{padding:15px}#classroom-miniapp .sc-surface{padding:13px}#classroom-miniapp .sc-brand{font-size:17px}}@media(pointer:coarse){#classroom-miniapp button{min-height:44px}}
+&lt;/style&gt;
+&lt;div class=&quot;sc-labelbar&quot;&gt;&lt;span&gt;家校日常 · 交互原型&lt;/span&gt;&lt;span&gt;示例数据 · 未连接真实服务&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;sc-phone&quot;&gt;
+&lt;header class=&quot;sc-head&quot;&gt;
+&lt;div class=&quot;sc-top&quot;&gt;&lt;div class=&quot;sc-brand&quot;&gt;&lt;span class=&quot;sc-brandmark&quot;&gt;&lt;i data-lucide=&quot;sprout&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/span&gt;家校日常&lt;/div&gt;&lt;span class=&quot;sc-wechat&quot; aria-hidden=&quot;true&quot;&gt;··· ⊙&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;sc-subhead&quot;&gt;&lt;span&gt;青禾小学 · 二年级 3 班&lt;/span&gt;&lt;select id=&quot;sc-persona&quot; aria-label=&quot;预览身份&quot;&gt;&lt;option value=&quot;parent&quot;&gt;普通家长视角&lt;/option&gt;&lt;option value=&quot;teacher&quot;&gt;老师视角&lt;/option&gt;&lt;option value=&quot;committee&quot;&gt;家委会视角&lt;/option&gt;&lt;option value=&quot;admin&quot;&gt;系统管理员视角&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;
+&lt;/header&gt;
+&lt;main class=&quot;sc-main&quot; id=&quot;sc-screen&quot;&gt;&lt;/main&gt;
+&lt;div class=&quot;sc-toast sc-hidden&quot; id=&quot;sc-toast&quot; role=&quot;status&quot; aria-live=&quot;polite&quot;&gt;&lt;/div&gt;
+&lt;nav class=&quot;sc-nav&quot; aria-label=&quot;小程序主导航&quot;&gt;
+&lt;button type=&quot;button&quot; data-go=&quot;home&quot;&gt;&lt;i data-lucide=&quot;house&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;首页&lt;/button&gt;&lt;button type=&quot;button&quot; data-go=&quot;tasks&quot;&gt;&lt;i data-lucide=&quot;circle-check&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;待办&lt;/button&gt;&lt;button type=&quot;button&quot; data-go=&quot;schedule&quot;&gt;&lt;i data-lucide=&quot;calendar-days&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;日程&lt;/button&gt;&lt;button type=&quot;button&quot; data-go=&quot;finance&quot;&gt;&lt;i data-lucide=&quot;wallet&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;费用&lt;/button&gt;&lt;button type=&quot;button&quot; data-go=&quot;profile&quot;&gt;&lt;i data-lucide=&quot;user-round&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;我的&lt;/button&gt;
+&lt;/nav&gt;
+&lt;/div&gt;
+&lt;script&gt;
+(()=&gt;{
+const root=document.getElementById(&#x27;classroom-miniapp&#x27;);
+const screen=root.querySelector(&#x27;#sc-screen&#x27;);
+const toast=root.querySelector(&#x27;#sc-toast&#x27;);
+const state={page:&#x27;home&#x27;,role:&#x27;parent&#x27;,done:false,ack:false,swapped:false,dutyChanged:false,scheduleTab:&#x27;course&#x27;,day:9,financeTab:&#x27;payment&#x27;,verified:false,approved:false,submitted:false,joinSent:false,qaQuestion:&#x27;&#x27;,qaAnswer:&#x27;&#x27;,qaKind:&#x27;&#x27;,draft:null,published:null,adjustPreview:false,accent:&#x27;jade&#x27;,radius:18};
+const e=s=&gt;String(s).replace(/[&amp;&lt;&gt;&quot;&#x27;]/g,c=&gt;({&#x27;&amp;&#x27;:&#x27;&amp;amp;&#x27;,&#x27;&lt;&#x27;:&#x27;&amp;lt;&#x27;,&#x27;&gt;&#x27;:&#x27;&amp;gt;&#x27;,&#x27;&quot;&#x27;:&#x27;&amp;quot;&#x27;,&quot;&#x27;&quot;:&#x27;&amp;#39;&#x27;}[c]));
+const icon=n=&gt;`&lt;i data-lucide=&quot;${n}&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;`;
+const badge=(t,w=false)=&gt;`&lt;span class=&quot;sc-badge${w?&#x27; warm&#x27;:&#x27;&#x27;}&quot;&gt;${t}&lt;/span&gt;`;
+const title=(t,s)=&gt;`&lt;div class=&quot;sc-title&quot;&gt;&lt;h2&gt;${t}&lt;/h2&gt;&lt;p class=&quot;sc-muted&quot;&gt;${s}&lt;/p&gt;&lt;/div&gt;`;
+const back=(p=&#x27;home&#x27;)=&gt;`&lt;button class=&quot;sc-back&quot; data-go=&quot;${p}&quot; type=&quot;button&quot;&gt;${icon(&#x27;chevron-left&#x27;)}返回&lt;/button&gt;`;
+const isManager=()=&gt;state.role!==&#x27;parent&#x27;;
+const roleName=()=&gt;({parent:&#x27;林小禾妈妈&#x27;,teacher:&#x27;周老师&#x27;,committee:&#x27;沈委员&#x27;,admin:&#x27;系统管理员&#x27;}[state.role]);
+const listItem=(glyph,t,sub,go,tag=&#x27;&#x27;)=&gt;`&lt;button type=&quot;button&quot; class=&quot;sc-item&quot; data-go=&quot;${go}&quot;&gt;&lt;span class=&quot;sc-glyph&quot;&gt;${icon(glyph)}&lt;/span&gt;&lt;span class=&quot;sc-grow&quot;&gt;&lt;span&gt;${t}&lt;/span&gt;&lt;p class=&quot;sc-muted&quot;&gt;${sub}&lt;/p&gt;&lt;/span&gt;${tag||icon(&#x27;chevron-right&#x27;)}&lt;/button&gt;`;
+function notice(text){toast.textContent=text;toast.classList.remove(&#x27;sc-hidden&#x27;)}
+function go(page){state.page=page;toast.classList.add(&#x27;sc-hidden&#x27;);render()}
+function render(){
+root.style.setProperty(&#x27;--sc-radius&#x27;,state.radius+&#x27;px&#x27;);
+root.style.setProperty(&#x27;--sc-accent&#x27;,state.accent===&#x27;jade&#x27;?&#x27;light-dark(#28644d,#9bd8b4)&#x27;:&#x27;light-dark(#355f88,#a9cde9)&#x27;);
+root.style.setProperty(&#x27;--sc-soft&#x27;,state.accent===&#x27;jade&#x27;?&#x27;light-dark(#e8f1e9,#2d4435)&#x27;:&#x27;light-dark(#eaf0f6,#263f50)&#x27;);
+root.querySelectorAll(&#x27;.sc-nav button&#x27;).forEach(b=&gt;b.setAttribute(&#x27;aria-current&#x27;,b.dataset.go===state.page?&#x27;page&#x27;:&#x27;false&#x27;));
+let html=&#x27;&#x27;;
+if(state.page===&#x27;home&#x27;)html=`${title(&#x27;把今天的事，安排好&#x27;,&#x27;9 月 8 日，星期二 · 林小禾 / 林小满&#x27;)}
+&lt;div class=&quot;sc-surface sc-hero&quot;&gt;&lt;div class=&quot;sc-row&quot;&gt;&lt;div&gt;&lt;div class=&quot;sc-muted&quot;&gt;与孩子相关的待办&lt;/div&gt;&lt;strong&gt;${2-Number(state.done)-Number(state.submitted)}&lt;/strong&gt;&lt;span&gt; 项待处理&lt;/span&gt;&lt;/div&gt;&lt;button data-go=&quot;tasks&quot; type=&quot;button&quot;&gt;去查看 ${icon(&#x27;arrow-up-right&#x27;)}&lt;/button&gt;&lt;/div&gt;&lt;p class=&quot;sc-muted&quot;&gt;${state.done?&#x27;运动服准备已完成&#x27;:&#x27;运动服准备 · 明天 08:00 前&#x27;}&lt;/p&gt;&lt;/div&gt;
+&lt;div class=&quot;sc-section&quot;&gt;&lt;h3&gt;常用入口&lt;/h3&gt;${isManager()?&#x27;&lt;button class=&quot;sc-link&quot; data-go=&quot;manage&quot; type=&quot;button&quot;&gt;管理工作台 →&lt;/button&gt;&#x27;:&#x27;&#x27;}&lt;/div&gt;
+&lt;div class=&quot;sc-quick&quot;&gt;&lt;button data-go=&quot;schedule&quot; type=&quot;button&quot;&gt;${icon(&#x27;calendar-days&#x27;)}课程与值日&lt;/button&gt;&lt;button data-go=&quot;qa&quot; type=&quot;button&quot;&gt;${icon(&#x27;message-circle&#x27;)}公共问答&lt;/button&gt;&lt;button data-go=&quot;finance&quot; type=&quot;button&quot;&gt;${icon(&#x27;receipt-text&#x27;)}费用公示&lt;/button&gt;&lt;/div&gt;
+&lt;div class=&quot;sc-section&quot;&gt;&lt;h3&gt;班级通知&lt;/h3&gt;&lt;span class=&quot;sc-muted&quot;&gt;最新发布&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;sc-surface sc-stack&quot;&gt;${state.published?listItem(&#x27;bell&#x27;,e(state.published.title),&#x27;刚刚 · &#x27;+e(state.published.scope),&#x27;published&#x27;,badge(&#x27;新&#x27;)):&#x27;&#x27;}${state.swapped?listItem(&#x27;calendar-sync&#x27;,&#x27;周三课程临时调整&#x27;,&#x27;第 3 节与第 5 节互换 · 仅本次&#x27;,&#x27;schedule&#x27;,badge(&#x27;有调整&#x27;,true)):&#x27;&#x27;}${listItem(&#x27;notebook-pen&#x27;,&#x27;周三体育课准备提醒&#x27;,&#x27;周老师 · 今天 16:30&#x27;,&#x27;detail&#x27;,badge(state.ack?&#x27;已读&#x27;:&#x27;未读&#x27;))}${listItem(&#x27;clipboard-list&#x27;,&#x27;秋游参加意向确认&#x27;,&#x27;家委会 · 周五 18:00 截止&#x27;,&#x27;collect&#x27;,badge(&#x27;待填写&#x27;,true))}&lt;/div&gt;
+&lt;div class=&quot;sc-section&quot;&gt;&lt;h3&gt;明天的安排&lt;/h3&gt;&lt;button class=&quot;sc-link&quot; data-go=&quot;schedule&quot; type=&quot;button&quot;&gt;查看日程 →&lt;/button&gt;&lt;/div&gt;&lt;div class=&quot;sc-surface&quot;&gt;&lt;div class=&quot;sc-row&quot;&gt;&lt;span&gt;值日 · ${state.dutyChanged?&#x27;周星然&#x27;:&#x27;林小禾&#x27;}、陈若溪&lt;/span&gt;${badge(&#x27;16:10&#x27;)}&lt;/div&gt;&lt;p class=&quot;sc-muted&quot;&gt;整理讲台、擦白板、归置清洁工具&lt;/p&gt;&lt;/div&gt;`;
+if(state.page===&#x27;tasks&#x27;)html=`${title(&#x27;待办事项&#x27;,&#x27;按孩子查看 · 已完成会同步给关联亲属&#x27;)}&lt;div class=&quot;sc-stack&quot;&gt;&lt;div class=&quot;sc-surface&quot;&gt;&lt;div class=&quot;sc-row&quot;&gt;${badge(&#x27;准备事项&#x27;)}&lt;span class=&quot;sc-muted&quot;&gt;林小禾&lt;/span&gt;&lt;/div&gt;&lt;h3 style=&quot;margin-top:12px&quot;&gt;准备运动服与水杯&lt;/h3&gt;&lt;p class=&quot;sc-muted&quot;&gt;明天 08:00 前 · 来自体育课通知&lt;/p&gt;&lt;div class=&quot;sc-actions&quot;&gt;&lt;button class=&quot;sc-btn secondary&quot; data-go=&quot;detail&quot; type=&quot;button&quot;&gt;查看要求&lt;/button&gt;&lt;button class=&quot;sc-btn&quot; data-action=&quot;complete&quot; type=&quot;button&quot; ${state.done?&#x27;disabled&#x27;:&#x27;&#x27;}&gt;${state.done?&#x27;已完成&#x27;:&#x27;标记完成&#x27;}&lt;/button&gt;&lt;/div&gt;${state.done?&#x27;&lt;p class=&quot;sc-muted&quot;&gt;妈妈已确认 · 此孩子的后续催办已停止&lt;/p&gt;&#x27;:&#x27;&#x27;}&lt;/div&gt;&lt;div class=&quot;sc-surface&quot;&gt;&lt;div class=&quot;sc-row&quot;&gt;${badge(&#x27;信息采集&#x27;)}&lt;span class=&quot;sc-muted&quot;&gt;林小满&lt;/span&gt;&lt;/div&gt;&lt;h3 style=&quot;margin-top:12px&quot;&gt;秋游参加意向确认&lt;/h3&gt;&lt;p class=&quot;sc-muted&quot;&gt;周五 18:00 前 · 腾讯文档填写&lt;/p&gt;&lt;div class=&quot;sc-actions&quot;&gt;&lt;button class=&quot;sc-btn secondary&quot; data-go=&quot;collect&quot; type=&quot;button&quot;&gt;${state.submitted?&#x27;查看自报状态&#x27;:&#x27;前往填写&#x27;}&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;`;
+if(state.page===&#x27;detail&#x27;)html=`${back(&#x27;tasks&#x27;)}${badge(&#x27;准备事项&#x27;)}${title(&#x27;周三体育课准备提醒&#x27;,&#x27;周老师 · 9 月 8 日 16:30 · 版本 1&#x27;)}&lt;div class=&quot;sc-surface&quot;&gt;&lt;p&gt;周三体育课请准备：&lt;/p&gt;&lt;ul class=&quot;sc-plainlist&quot;&gt;&lt;li&gt;适合运动的服装和运动鞋&lt;/li&gt;&lt;li&gt;装好饮用水的水杯&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;请在上学前检查物品是否带齐。&lt;/p&gt;&lt;div class=&quot;sc-dangerfree&quot;&gt;&lt;span class=&quot;sc-muted&quot;&gt;适用范围&lt;/span&gt;&lt;p&gt;全体学生 · 当前孩子：林小禾&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;sc-row&quot;&gt;&lt;span class=&quot;sc-muted&quot;&gt;完成截止&lt;/span&gt;&lt;span&gt;9 月 9 日 08:00&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;sc-spacer&quot;&gt;&lt;/div&gt;&lt;div class=&quot;sc-note&quot;&gt;一位关联亲属确认即可。系统记录“已确认准备”，不判断孩子实际行为。&lt;/div&gt;&lt;div class=&quot;sc-actions&quot;&gt;&lt;button class=&quot;sc-btn secondary&quot; data-action=&quot;ack&quot; type=&quot;button&quot;&gt;${state.ack?&#x27;已确认收到&#x27;:&#x27;确认收到&#x27;}&lt;/button&gt;&lt;button class=&quot;sc-btn&quot; data-action=&quot;complete&quot; type=&quot;button&quot; ${state.done?&#x27;disabled&#x27;:&#x27;&#x27;}&gt;${state.done?&#x27;已完成准备&#x27;:&#x27;已准备完成&#x27;}&lt;/button&gt;&lt;/div&gt;`;
+if(state.page===&#x27;collect&#x27;)html=`${back(&#x27;tasks&#x27;)}${title(&#x27;秋游参加意向确认&#x27;,&#x27;林小满 · 周五 18:00 截止&#x27;)}&lt;div class=&quot;sc-surface&quot;&gt;&lt;h3&gt;填写参加意向&lt;/h3&gt;&lt;p&gt;请打开班级收集表，选择是否参加本次秋游。&lt;/p&gt;&lt;p class=&quot;sc-muted&quot;&gt;腾讯文档 · 仅采集活动参加信息&lt;/p&gt;&lt;div class=&quot;sc-actions&quot;&gt;&lt;button class=&quot;sc-btn secondary&quot; data-action=&quot;external&quot; type=&quot;button&quot;&gt;${icon(&#x27;external-link&#x27;)}打开填写入口&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;sc-spacer&quot;&gt;&lt;/div&gt;&lt;div class=&quot;sc-note&quot;&gt;打开表单不代表已提交。填写后可在这里声明完成，家委会再核验。&lt;/div&gt;&lt;div class=&quot;sc-actions&quot;&gt;&lt;button class=&quot;sc-btn&quot; data-action=&quot;submitted&quot; type=&quot;button&quot; ${state.submitted?&#x27;disabled&#x27;:&#x27;&#x27;}&gt;${state.submitted?&#x27;已自报完成 · 待核验&#x27;:&#x27;我已填写&#x27;}&lt;/button&gt;&lt;/div&gt;`;
+if(state.page===&#x27;schedule&#x27;){
+const dates=[8,9,10];const weekdays={8:&#x27;周二&#x27;,9:&#x27;周三&#x27;,10:&#x27;周四&#x27;};
+html=`${title(&#x27;课程与值日&#x27;,&#x27;学期基础安排 · 临时调整单独标记&#x27;)}&lt;div class=&quot;sc-tabs&quot;&gt;&lt;button type=&quot;button&quot; data-schedule=&quot;course&quot; aria-pressed=&quot;${state.scheduleTab===&#x27;course&#x27;}&quot;&gt;课程表&lt;/button&gt;&lt;button type=&quot;button&quot; data-schedule=&quot;duty&quot; aria-pressed=&quot;${state.scheduleTab===&#x27;duty&#x27;}&quot;&gt;值日表&lt;/button&gt;&lt;/div&gt;&lt;div class=&quot;sc-days&quot;&gt;${dates.map(d=&gt;`&lt;button type=&quot;button&quot; data-day=&quot;${d}&quot; aria-pressed=&quot;${state.day===d}&quot;&gt;${weekdays[d]}&lt;br&gt;9 月 ${d} 日&lt;/button&gt;`).join(&#x27;&#x27;)}&lt;/div&gt;`;
+if(state.scheduleTab===&#x27;course&#x27;){
+let courses=[[&#x27;08:20&#x27;,&#x27;第一节&#x27;,&#x27;语文&#x27;,&#x27;陈老师&#x27;],[&#x27;09:20&#x27;,&#x27;第二节&#x27;,&#x27;英语&#x27;,&#x27;李老师&#x27;],[&#x27;10:20&#x27;,&#x27;第三节&#x27;,state.swapped&amp;&amp;state.day===9?&#x27;美术&#x27;:&#x27;数学&#x27;,state.swapped&amp;&amp;state.day===9?&#x27;郑老师&#x27;:&#x27;周老师&#x27;],[&#x27;14:00&#x27;,&#x27;第五节&#x27;,state.swapped&amp;&amp;state.day===9?&#x27;数学&#x27;:&#x27;美术&#x27;,state.swapped&amp;&amp;state.day===9?&#x27;周老师&#x27;:&#x27;郑老师&#x27;]];
+html+=`${state.swapped&amp;&amp;state.day===9?&#x27;&lt;div class=&quot;sc-note&quot;&gt;临时串课：第 3、5 节互换，仅 9 月 9 日生效。原基础周表不变。&lt;/div&gt;&#x27;:&#x27;&#x27;}&lt;div class=&quot;sc-surface&quot;&gt;${courses.map((c,i)=&gt;`&lt;div class=&quot;sc-timeline ${state.swapped&amp;&amp;state.day===9&amp;&amp;i&gt;1?&#x27;changed&#x27;:&#x27;&#x27;}&quot;&gt;&lt;span class=&quot;sc-time&quot;&gt;${c[0]}&lt;br&gt;${c[1]}&lt;/span&gt;&lt;div class=&quot;sc-row&quot;&gt;&lt;div&gt;&lt;h3&gt;${c[2]}&lt;/h3&gt;&lt;p class=&quot;sc-muted&quot;&gt;${c[3]} · 本班教室&lt;/p&gt;&lt;/div&gt;${state.swapped&amp;&amp;state.day===9&amp;&amp;i&gt;1?badge(&#x27;临时调整&#x27;,true):&#x27;&#x27;}&lt;/div&gt;&lt;/div&gt;`).join(&#x27;&#x27;)}&lt;/div&gt;${(state.role===&#x27;teacher&#x27;||state.role===&#x27;admin&#x27;)?&#x27;&lt;div class=&quot;sc-actions&quot;&gt;&lt;button class=&quot;sc-btn full&quot; data-go=&quot;adjust&quot; type=&quot;button&quot;&gt;&#x27;+icon(&#x27;arrow-left-right&#x27;)+&#x27;临时调整&lt;/button&gt;&lt;/div&gt;&#x27;:&#x27;&#x27;}`;
+}else html+=`&lt;div class=&quot;sc-surface&quot;&gt;&lt;div class=&quot;sc-row&quot;&gt;&lt;h3&gt;放学值日&lt;/h3&gt;${badge(&#x27;16:10–16:25&#x27;)}&lt;/div&gt;&lt;p class=&quot;sc-muted&quot;&gt;9 月 ${state.day} 日 · ${weekdays[state.day]}&lt;/p&gt;&lt;div class=&quot;sc-spacer&quot;&gt;&lt;/div&gt;&lt;div class=&quot;sc-row&quot;&gt;&lt;span&gt;${state.dutyChanged&amp;&amp;state.day===9?&#x27;周星然&#x27;:&#x27;林小禾&#x27;}、陈若溪&lt;/span&gt;${state.dutyChanged&amp;&amp;state.day===9?badge(&#x27;换人&#x27;,true):badge(&#x27;基础安排&#x27;)}&lt;/div&gt;&lt;ul class=&quot;sc-plainlist&quot;&gt;&lt;li&gt;擦白板、整理讲台&lt;/li&gt;&lt;li&gt;检查课桌与地面&lt;/li&gt;&lt;li&gt;归置清洁工具&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;${state.dutyChanged&amp;&amp;state.day===9?&#x27;&lt;div class=&quot;sc-spacer&quot;&gt;&lt;/div&gt;&lt;div class=&quot;sc-note&quot;&gt;本次由周星然替换林小禾，已更新双方家庭的站内安排。&lt;/div&gt;&#x27;:&#x27;&#x27;}${isManager()?&#x27;&lt;div class=&quot;sc-actions&quot;&gt;&lt;button class=&quot;sc-btn&quot; data-go=&quot;duty-adjust&quot; type=&quot;button&quot;&gt;调整本次值日&lt;/button&gt;&lt;/div&gt;&#x27;:&#x27;&#x27;}`;
+}
+if(state.page===&#x27;adjust&#x27;)html=`${back(&#x27;schedule&#x27;)}${title(&#x27;临时串课&#x27;,&#x27;预览调整后发布 · 仅本次生效&#x27;)}&lt;div class=&quot;sc-fields&quot;&gt;&lt;label class=&quot;sc-field&quot;&gt;日期&lt;select id=&quot;sc-adjust-date&quot;&gt;&lt;option&gt;9 月 9 日 · 星期三&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;div class=&quot;sc-surface&quot;&gt;&lt;span class=&quot;sc-muted&quot;&gt;原安排&lt;/span&gt;&lt;p&gt;第 3 节 10:20 · 数学 / 周老师&lt;/p&gt;&lt;p&gt;第 5 节 14:00 · 美术 / 郑老师&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;sc-surface&quot;&gt;&lt;span class=&quot;sc-muted&quot;&gt;调整后&lt;/span&gt;&lt;p&gt;第 3 节 10:20 · 美术 / 郑老师&lt;/p&gt;&lt;p&gt;第 5 节 14:00 · 数学 / 周老师&lt;/p&gt;&lt;/div&gt;&lt;label class=&quot;sc-field&quot;&gt;公共说明&lt;input id=&quot;sc-adjust-reason&quot; value=&quot;本周三教学安排调整&quot; /&gt;&lt;/label&gt;&lt;/div&gt;&lt;div class=&quot;sc-spacer&quot;&gt;&lt;/div&gt;&lt;div class=&quot;sc-note&quot;&gt;影响全班 40 名学生；两节课一起更新。关联美术准备事项改为上午上课前，旧时点提醒失效。&lt;/div&gt;&lt;div class=&quot;sc-actions&quot;&gt;&lt;button class=&quot;sc-btn&quot; data-action=&quot;swap&quot; type=&quot;button&quot;&gt;确认本次调整&lt;/button&gt;&lt;/div&gt;`;
+if(state.page===&#x27;duty-adjust&#x27;)html=`${back(&#x27;schedule&#x27;)}${title(&#x27;调整本次值日&#x27;,&#x27;9 月 9 日 · 16:10&#x27;)}&lt;div class=&quot;sc-stack&quot;&gt;&lt;div class=&quot;sc-surface&quot;&gt;&lt;span class=&quot;sc-muted&quot;&gt;调整前&lt;/span&gt;&lt;p&gt;林小禾、陈若溪&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;sc-surface&quot;&gt;&lt;span class=&quot;sc-muted&quot;&gt;调整后&lt;/span&gt;&lt;p&gt;周星然、陈若溪&lt;/p&gt;&lt;/div&gt;&lt;label class=&quot;sc-field&quot;&gt;公共说明&lt;input id=&quot;sc-duty-reason&quot; value=&quot;本次值日人员调整&quot; /&gt;&lt;/label&gt;&lt;div class=&quot;sc-note&quot;&gt;通知林小禾、周星然的已关联亲属。无需填写私人原因。&lt;/div&gt;&lt;button class=&quot;sc-btn&quot; data-action=&quot;duty-change&quot; type=&quot;button&quot;&gt;确认本次调整&lt;/button&gt;&lt;/div&gt;`;
+if(state.page===&#x27;finance&#x27;){
+const received=state.verified?2000:1950;const balance=received-900-50;
+html=`${title(&#x27;班级费用公示&#x27;,&#x27;9 月班级环境维护 · 仅本班可见&#x27;)}&lt;div class=&quot;sc-surface&quot;&gt;&lt;div class=&quot;sc-row&quot;&gt;&lt;span&gt;当前账面结余&lt;/span&gt;${badge(&#x27;已核对&#x27;)}&lt;/div&gt;&lt;div class=&quot;sc-amount&quot; style=&quot;font-size:34px;margin:8px 0 12px&quot;&gt;¥${balance.toLocaleString()}&lt;/div&gt;&lt;div class=&quot;sc-stats&quot;&gt;&lt;div&gt;&lt;label&gt;累计核实实收&lt;/label&gt;&lt;strong&gt;¥${received.toLocaleString()}&lt;/strong&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;已实付支出&lt;/label&gt;&lt;strong&gt;¥900&lt;/strong&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;已实际退款&lt;/label&gt;&lt;strong&gt;¥50&lt;/strong&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;公示更新时间&lt;/label&gt;&lt;p&gt;9 月 8 日 17:00&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;sc-tabs&quot;&gt;&lt;button type=&quot;button&quot; data-finance=&quot;payment&quot; aria-pressed=&quot;${state.financeTab===&#x27;payment&#x27;}&quot;&gt;缴费明细&lt;/button&gt;&lt;button type=&quot;button&quot; data-finance=&quot;expense&quot; aria-pressed=&quot;${state.financeTab===&#x27;expense&#x27;}&quot;&gt;资金使用&lt;/button&gt;&lt;button type=&quot;button&quot; data-finance=&quot;balance&quot; aria-pressed=&quot;${state.financeTab===&#x27;balance&#x27;}&quot;&gt;核对与结余&lt;/button&gt;&lt;/div&gt;`;
+if(state.financeTab===&#x27;payment&#x27;)html+=`&lt;div class=&quot;sc-surface&quot;&gt;&lt;div class=&quot;sc-row&quot;&gt;&lt;h3&gt;每位孩子的缴费情况&lt;/h3&gt;&lt;/div&gt;&lt;p class=&quot;sc-muted&quot;&gt;${state.verified?&#x27;39 人已缴 · 1 人已退款&#x27;:&#x27;38 人已缴 · 1 人待核对 · 1 人已退款&#x27;}&lt;/p&gt;&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;学生&lt;/th&gt;&lt;th&gt;应缴&lt;/th&gt;&lt;th&gt;净缴&lt;/th&gt;&lt;th&gt;状态&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;${[[&#x27;林小禾&#x27;,50,50,&#x27;已缴&#x27;],[&#x27;林小满&#x27;,50,50,&#x27;已缴&#x27;],[&#x27;陈若溪&#x27;,50,50,&#x27;已缴&#x27;],[&#x27;周星然&#x27;,50,50,&#x27;已缴&#x27;],[&#x27;许知夏&#x27;,50,state.verified?50:0,state.verified?&#x27;已缴&#x27;:&#x27;待核对&#x27;],[&#x27;陆小川&#x27;,0,0,&#x27;已退款&#x27;]].map(r=&gt;`&lt;tr&gt;&lt;td&gt;${r[0]}&lt;/td&gt;&lt;td&gt;¥${r[1]}&lt;/td&gt;&lt;td&gt;¥${r[2]}&lt;/td&gt;&lt;td&gt;${badge(r[3]===&#x27;待核对&#x27;?&#x27;未缴&#x27;:r[3],r[3]===&#x27;待核对&#x27;)}${r[3]===&#x27;待核对&#x27;?&#x27;&lt;div class=&quot;sc-muted&quot;&gt;待核对&lt;/div&gt;&#x27;:&#x27;&#x27;}&lt;/td&gt;&lt;/tr&gt;`).join(&#x27;&#x27;)}&lt;/tbody&gt;&lt;/table&gt;&lt;p class=&quot;sc-muted&quot;&gt;展示 6 位示例学生 / 全班 40 位&lt;/p&gt;&lt;/div&gt;${isManager()?&#x27;&lt;div class=&quot;sc-actions&quot;&gt;&lt;button class=&quot;sc-btn&quot; data-go=&quot;finance-review&quot; type=&quot;button&quot;&gt;收款核对&lt;/button&gt;&lt;/div&gt;&#x27;:&#x27;&lt;div class=&quot;sc-spacer&quot;&gt;&lt;/div&gt;&lt;div class=&quot;sc-note&quot;&gt;实际收款由家委会在线下或微信转账完成；公示金额以核实到账为准。&lt;/div&gt;&#x27;}`;
+if(state.financeTab===&#x27;expense&#x27;)html+=`&lt;div class=&quot;sc-surface&quot;&gt;${listItem(&#x27;sparkles&#x27;,&#x27;教室清洁服务 · ¥600&#x27;,&#x27;9 月 6 日 · 经办陈委员 · 已复核&#x27;,&#x27;voucher&#x27;)}${listItem(&#x27;flower-2&#x27;,&#x27;班级布置材料 · ¥300&#x27;,&#x27;9 月 7 日 · 经办林委员 · 已复核&#x27;,&#x27;voucher-material&#x27;)}&lt;/div&gt;&lt;div class=&quot;sc-spacer&quot;&gt;&lt;/div&gt;&lt;div class=&quot;sc-note&quot;&gt;班内查看脱敏凭证，个人账户、电话和交易标识不公开。&lt;/div&gt;`;
+if(state.financeTab===&#x27;balance&#x27;)html+=`&lt;div class=&quot;sc-surface&quot;&gt;&lt;h3&gt;本期收支核对&lt;/h3&gt;&lt;table&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;期初结余&lt;/td&gt;&lt;td&gt;¥0&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;核实收款&lt;/td&gt;&lt;td&gt;¥${received}&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;实际退款&lt;/td&gt;&lt;td&gt;− ¥50&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;实付支出&lt;/td&gt;&lt;td&gt;− ¥900&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;账面结余&lt;/td&gt;&lt;td&gt;¥${balance}&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;核对差异&lt;/td&gt;&lt;td&gt;¥0&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p class=&quot;sc-muted&quot;&gt;经办：陈委员 · 复核：沈委员&lt;/p&gt;&lt;p&gt;剩余资金暂保管于本期项目，结项时再公示具体处置。&lt;/p&gt;&lt;/div&gt;`;
+}
+if(state.page===&#x27;voucher&#x27;||state.page===&#x27;voucher-material&#x27;)html=`${back(&#x27;finance&#x27;)}${title(&#x27;支出凭证&#x27;,&#x27;班内公示副本 · 示例&#x27;)}&lt;div class=&quot;sc-surface&quot;&gt;&lt;h3&gt;${state.page===&#x27;voucher-material&#x27;?&#x27;班级布置材料记录&#x27;:&#x27;教室清洁服务记录&#x27;}&lt;/h3&gt;&lt;table&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;日期&lt;/td&gt;&lt;td&gt;${state.page===&#x27;voucher-material&#x27;?&#x27;9 月 7 日&#x27;:&#x27;9 月 6 日&#x27;}&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;服务内容&lt;/td&gt;&lt;td&gt;${state.page===&#x27;voucher-material&#x27;?&#x27;班级布置材料&#x27;:&#x27;教室保洁&#x27;}&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;金额&lt;/td&gt;&lt;td&gt;${state.page===&#x27;voucher-material&#x27;?&#x27;¥300&#x27;:&#x27;¥600&#x27;}&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;经办 / 复核&lt;/td&gt;&lt;td&gt;${state.page===&#x27;voucher-material&#x27;?&#x27;林委员&#x27;:&#x27;陈委员&#x27;} / 沈委员&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p class=&quot;sc-muted&quot;&gt;原始凭证仅有财务权限的管理者可查看。&lt;/p&gt;&lt;/div&gt;`;
+if(state.page===&#x27;finance-review&#x27;)html=`${back(&#x27;finance&#x27;)}${title(&#x27;收款核对&#x27;,&#x27;以实际流水核实到账&#x27;)}&lt;div class=&quot;sc-surface&quot;&gt;&lt;div class=&quot;sc-row&quot;&gt;&lt;h3&gt;许知夏 · 环境维护费&lt;/h3&gt;${badge(state.verified?&#x27;已入账&#x27;:&#x27;待复核&#x27;,!state.verified)}&lt;/div&gt;&lt;p class=&quot;sc-amount&quot; style=&quot;font-size:28px&quot;&gt;¥50.00&lt;/p&gt;&lt;p&gt;家长申报：已微信转账&lt;/p&gt;&lt;p class=&quot;sc-muted&quot;&gt;经办陈委员已核实流水 · 待当前管理者复核&lt;/p&gt;&lt;div class=&quot;sc-spacer&quot;&gt;&lt;/div&gt;&lt;label class=&quot;sc-check&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;sc-reconcile-check&quot; ${state.verified?&#x27;checked disabled&#x27;:&#x27;&#x27;}&gt;已核对到账金额、所属孩子及重复记录&lt;/label&gt;&lt;/div&gt;&lt;div class=&quot;sc-actions&quot;&gt;&lt;button class=&quot;sc-btn&quot; data-action=&quot;verify&quot; type=&quot;button&quot; ${state.verified?&#x27;disabled&#x27;:&#x27;&#x27;}&gt;${state.verified?&#x27;已复核入账&#x27;:&#x27;复核入账并更新公示&#x27;}&lt;/button&gt;&lt;/div&gt;&lt;p class=&quot;sc-muted&quot;&gt;“已申报”不会直接增加实收。&lt;/p&gt;`;
+if(state.page===&#x27;qa&#x27;)html=`${back()}${title(&#x27;公共事项小助手&#x27;,&#x27;通知 · 作业要求 · 准备清单 · 操作说明&#x27;)}&lt;div class=&quot;sc-chat&quot;&gt;&lt;div class=&quot;sc-row&quot;&gt;&lt;h3&gt;今天想确认什么？&lt;/h3&gt;${badge(&#x27;公共知识&#x27;)}&lt;/div&gt;&lt;p&gt;我可以帮你查找已发布的日常安排，并附上来源。&lt;/p&gt;&lt;p class=&quot;sc-muted&quot;&gt;具体反馈、争议和个人情况，请通过原有渠道直接沟通。&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;sc-suggestions&quot;&gt;&lt;button type=&quot;button&quot; data-ask=&quot;明天体育课要准备什么？&quot;&gt;明天要准备什么？&lt;/button&gt;&lt;button type=&quot;button&quot; data-ask=&quot;今天数学作业是哪几页？&quot;&gt;数学作业要求&lt;/button&gt;&lt;button type=&quot;button&quot; data-ask=&quot;保证老师明天一定回复吗？&quot;&gt;回复承诺边界&lt;/button&gt;&lt;/div&gt;${state.qaQuestion?`&lt;div class=&quot;sc-chat user&quot;&gt;${state.qaKind===&#x27;OUT_OF_SCOPE&#x27;?&#x27;已提交问题&#x27;:e(state.qaQuestion)}&lt;/div&gt;&lt;div class=&quot;sc-chat&quot; role=&quot;status&quot;&gt;&lt;span class=&quot;sc-muted&quot;&gt;公共事项小助手 · 演示回答&lt;/span&gt;&lt;p&gt;${e(state.qaAnswer)}&lt;/p&gt;${state.qaKind===&#x27;ANSWER&#x27;?&#x27;&lt;button class=&quot;sc-link&quot; data-go=&quot;detail&quot; type=&quot;button&quot;&gt;查看来源通知 →&lt;/button&gt;&#x27;:&#x27;&#x27;}&lt;/div&gt;`:&#x27;&#x27;}&lt;label class=&quot;sc-field&quot;&gt;输入公共事项问题&lt;textarea id=&quot;sc-question&quot; placeholder=&quot;例如：明天体育课需要准备什么？&quot;&gt;&lt;/textarea&gt;&lt;/label&gt;&lt;div class=&quot;sc-actions&quot;&gt;&lt;button class=&quot;sc-btn&quot; data-action=&quot;ask&quot; type=&quot;button&quot;&gt;查询&lt;/button&gt;&lt;/div&gt;`;
+if(state.page===&#x27;profile&#x27;)html=`${title(&#x27;我的&#x27;,&#x27;管理身份与家庭关联分开保存&#x27;)}&lt;div class=&quot;sc-surface&quot;&gt;&lt;div class=&quot;sc-row&quot;&gt;&lt;div class=&quot;sc-row&quot;&gt;&lt;span class=&quot;sc-avatar&quot;&gt;${roleName().slice(0,1)}&lt;/span&gt;&lt;div&gt;&lt;h3&gt;${roleName()}&lt;/h3&gt;&lt;p class=&quot;sc-muted&quot;&gt;${isManager()?&#x27;管理身份 + 普通家长&#x27;:&#x27;普通家长&#x27;}&lt;/p&gt;&lt;/div&gt;${badge(&#x27;已入班&#x27;)}&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;sc-section&quot;&gt;&lt;h3&gt;已关联孩子&lt;/h3&gt;&lt;button class=&quot;sc-link&quot; data-go=&quot;join&quot; type=&quot;button&quot;&gt;添加关联 →&lt;/button&gt;&lt;/div&gt;&lt;div class=&quot;sc-surface&quot;&gt;${listItem(&#x27;sprout&#x27;,&#x27;林小禾 · 妈妈&#x27;,&#x27;二年级 3 班 · 已审批&#x27;,&#x27;join&#x27;,badge(&#x27;有效&#x27;))}${listItem(&#x27;sprout&#x27;,&#x27;林小满 · 妈妈&#x27;,&#x27;二年级 3 班 · 已审批&#x27;,&#x27;join&#x27;,badge(&#x27;有效&#x27;))}&lt;/div&gt;&lt;div class=&quot;sc-section&quot;&gt;&lt;h3&gt;账户与提醒&lt;/h3&gt;&lt;/div&gt;&lt;div class=&quot;sc-surface&quot;&gt;${listItem(&#x27;user-plus&#x27;,&#x27;身份申请 / 加入班级&#x27;,&#x27;身份可多选，管理权限需授权&#x27;,&#x27;join&#x27;)}${isManager()?listItem(&#x27;settings-2&#x27;,&#x27;管理工作台&#x27;,&#x27;发布、审批、排课与账务&#x27;,&#x27;manage&#x27;):&#x27;&#x27;}${listItem(&#x27;bell&#x27;,&#x27;提醒设置&#x27;,&#x27;站内待办持续保留&#x27;,&#x27;notification-settings&#x27;)}&lt;/div&gt;`;
+if(state.page===&#x27;notification-settings&#x27;)html=`${back(&#x27;profile&#x27;)}${title(&#x27;提醒设置&#x27;,&#x27;按你的订阅选择发送微信提醒&#x27;)}&lt;div class=&quot;sc-surface sc-stack&quot;&gt;&lt;div class=&quot;sc-row&quot;&gt;&lt;span&gt;任务提醒&lt;/span&gt;${badge(&#x27;待授权&#x27;,true)}&lt;/div&gt;&lt;button class=&quot;sc-btn secondary&quot; data-action=&quot;subscribe&quot; type=&quot;button&quot;&gt;开启微信订阅提醒&lt;/button&gt;&lt;p class=&quot;sc-muted&quot;&gt;未订阅仍可在小程序查看和处理全部待办。&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;sc-spacer&quot;&gt;&lt;/div&gt;&lt;div class=&quot;sc-surface&quot;&gt;&lt;div class=&quot;sc-row&quot;&gt;&lt;span&gt;免打扰时间&lt;/span&gt;&lt;span&gt;22:00–08:00&lt;/span&gt;&lt;/div&gt;&lt;p class=&quot;sc-muted&quot;&gt;是否可重复发送以实际订阅条件为准。&lt;/p&gt;&lt;/div&gt;`;
+if(state.page===&#x27;join&#x27;)html=`${back(&#x27;profile&#x27;)}${title(&#x27;加入班级与关联孩子&#x27;,&#x27;选择身份，提交后等待对应管理者审核&#x27;)}&lt;div class=&quot;sc-fields&quot;&gt;&lt;label class=&quot;sc-field&quot;&gt;班级邀请码&lt;input value=&quot;QH-203&quot; aria-label=&quot;班级邀请码&quot;&gt;&lt;/label&gt;&lt;div&gt;&lt;p class=&quot;sc-muted&quot; style=&quot;margin-bottom:8px&quot;&gt;我的身份 · 可多选&lt;/p&gt;&lt;div class=&quot;sc-stack&quot;&gt;${[&#x27;系统管理员&#x27;,&#x27;老师&#x27;,&#x27;家委会委员&#x27;,&#x27;普通家长&#x27;].map(t=&gt;`&lt;label class=&quot;sc-check&quot;&gt;&lt;input type=&quot;checkbox&quot; name=&quot;sc-role&quot; value=&quot;${t}&quot; ${t===&#x27;普通家长&#x27;?&#x27;checked&#x27;:&#x27;&#x27;}&gt;${t}&lt;/label&gt;`).join(&#x27;&#x27;)}&lt;/div&gt;&lt;/div&gt;&lt;label class=&quot;sc-field&quot;&gt;孩子（可选）&lt;input value=&quot;林小禾&quot; aria-label=&quot;孩子姓名&quot;&gt;&lt;/label&gt;&lt;label class=&quot;sc-field&quot;&gt;亲属身份&lt;select aria-label=&quot;亲属身份&quot;&gt;&lt;option&gt;妈妈&lt;/option&gt;&lt;option&gt;爸爸&lt;/option&gt;&lt;option&gt;奶奶&lt;/option&gt;&lt;option&gt;爷爷&lt;/option&gt;&lt;option&gt;外婆&lt;/option&gt;&lt;option&gt;外公&lt;/option&gt;&lt;option&gt;其他&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;/div&gt;&lt;div class=&quot;sc-actions&quot;&gt;&lt;button class=&quot;sc-btn&quot; data-action=&quot;join&quot; type=&quot;button&quot;&gt;${state.joinSent?&#x27;已提交 · 可再次预览&#x27;:&#x27;提交申请&#x27;}&lt;/button&gt;&lt;/div&gt;&lt;p class=&quot;sc-muted&quot;&gt;身份选择不直接授予权限；关联需家委会委员及以上人员审批，申请人不能自审。&lt;/p&gt;`;
+if(state.page===&#x27;manage&#x27;)html=`${title(&#x27;管理工作台&#x27;,roleName()+&#x27; · 二年级 3 班&#x27;)}&lt;div class=&quot;sc-managegrid&quot;&gt;&lt;button data-go=&quot;compose&quot; type=&quot;button&quot;&gt;${icon(&#x27;square-pen&#x27;)}发布日常任务&lt;span class=&quot;sc-muted&quot;&gt;通知 / 作业 / 采集 / 待办&lt;/span&gt;&lt;/button&gt;&lt;button data-go=&quot;approvals&quot; type=&quot;button&quot;&gt;${icon(&#x27;user-check&#x27;)}关联审批&lt;span class=&quot;sc-muted&quot;&gt;${state.approved?&#x27;暂无待审批&#x27;:&#x27;1 条待审批&#x27;}&lt;/span&gt;&lt;/button&gt;&lt;button data-go=&quot;schedule&quot; type=&quot;button&quot;&gt;${icon(&#x27;calendar-sync&#x27;)}课程与值日&lt;span class=&quot;sc-muted&quot;&gt;基础表与临时调整&lt;/span&gt;&lt;/button&gt;&lt;button data-go=&quot;finance-review&quot; type=&quot;button&quot;&gt;${icon(&#x27;receipt&#x27;)}费用核对&lt;span class=&quot;sc-muted&quot;&gt;${state.verified?&#x27;已完成核对&#x27;:&#x27;1 笔待复核&#x27;}&lt;/span&gt;&lt;/button&gt;&lt;button data-go=&quot;students&quot; type=&quot;button&quot;&gt;${icon(&#x27;users&#x27;)}学生与群组&lt;span class=&quot;sc-muted&quot;&gt;40 位学生 · 3 个群组&lt;/span&gt;&lt;/button&gt;&lt;button data-go=&quot;knowledge&quot; type=&quot;button&quot;&gt;${icon(&#x27;book-open&#x27;)}公共知识库&lt;span class=&quot;sc-muted&quot;&gt;来源、版本与可用范围&lt;/span&gt;&lt;/button&gt;&lt;/div&gt;&lt;div class=&quot;sc-section&quot;&gt;&lt;h3&gt;复用模板&lt;/h3&gt;&lt;/div&gt;&lt;div class=&quot;sc-surface&quot;&gt;${listItem(&#x27;notebook-pen&#x27;,&#x27;每日作业通知&#x27;,&#x27;复用内容结构，重新确认日期与范围&#x27;,&#x27;compose&#x27;)}${listItem(&#x27;backpack&#x27;,&#x27;活动准备清单&#x27;,&#x27;物品、时间、家长确认&#x27;,&#x27;compose&#x27;)}&lt;/div&gt;`;
+if(state.page===&#x27;approvals&#x27;)html=`${back(&#x27;manage&#x27;)}${title(&#x27;孩子关联审批&#x27;,&#x27;核对关系后生效 · 申请人不能自审&#x27;)}&lt;div class=&quot;sc-surface&quot;&gt;&lt;div class=&quot;sc-row&quot;&gt;&lt;h3&gt;刘女士申请关联陈若溪&lt;/h3&gt;${badge(state.approved?&#x27;已通过&#x27;:&#x27;待审批&#x27;,!state.approved)}&lt;/div&gt;&lt;p&gt;亲属身份：奶奶&lt;/p&gt;&lt;p class=&quot;sc-muted&quot;&gt;二年级 3 班 · 今天 15:20 提交&lt;/p&gt;&lt;div class=&quot;sc-actions&quot;&gt;&lt;button class=&quot;sc-btn secondary&quot; data-action=&quot;reject&quot; type=&quot;button&quot; ${state.approved?&#x27;disabled&#x27;:&#x27;&#x27;}&gt;退回补充&lt;/button&gt;&lt;button class=&quot;sc-btn&quot; data-action=&quot;approve&quot; type=&quot;button&quot; ${state.approved?&#x27;disabled&#x27;:&#x27;&#x27;}&gt;${state.approved?&#x27;已通过&#x27;:&#x27;核对后通过&#x27;}&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;`;
+if(state.page===&#x27;students&#x27;)html=`${back(&#x27;manage&#x27;)}${title(&#x27;学生与群组&#x27;,&#x27;班级共享名册 · 管理者可维护&#x27;)}&lt;div class=&quot;sc-surface&quot;&gt;${[[&#x27;林小禾&#x27;,&#x27;女生 · 3 位已关联亲属&#x27;],[&#x27;林小满&#x27;,&#x27;女生 · 2 位已关联亲属&#x27;],[&#x27;陈若溪&#x27;,&#x27;女生 · &#x27;+(state.approved?3:2)+&#x27; 位已关联亲属&#x27;],[&#x27;周星然&#x27;,&#x27;男生 · 2 位已关联亲属&#x27;]].map(r=&gt;`&lt;div class=&quot;sc-item&quot;&gt;&lt;span class=&quot;sc-avatar&quot;&gt;${r[0].slice(0,1)}&lt;/span&gt;&lt;div&gt;&lt;h3&gt;${r[0]}&lt;/h3&gt;&lt;p class=&quot;sc-muted&quot;&gt;${r[1]}&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;`).join(&#x27;&#x27;)}&lt;/div&gt;&lt;div class=&quot;sc-section&quot;&gt;&lt;h3&gt;自建群组&lt;/h3&gt;&lt;/div&gt;&lt;div class=&quot;sc-surface&quot;&gt;&lt;div class=&quot;sc-row&quot;&gt;&lt;span&gt;合唱队&lt;/span&gt;${badge(&#x27;8 人&#x27;)}&lt;/div&gt;&lt;p class=&quot;sc-muted&quot;&gt;可用于通知范围与值日安排&lt;/p&gt;&lt;/div&gt;`;
+if(state.page===&#x27;knowledge&#x27;)html=`${back(&#x27;manage&#x27;)}${title(&#x27;公共知识库&#x27;,&#x27;供公共问答引用 · 保留来源版本&#x27;)}&lt;div class=&quot;sc-stack&quot;&gt;&lt;div class=&quot;sc-surface&quot;&gt;&lt;div class=&quot;sc-row&quot;&gt;&lt;h3&gt;体育课物品准备&lt;/h3&gt;${badge(&#x27;可用于 AI&#x27;)}&lt;/div&gt;&lt;p class=&quot;sc-muted&quot;&gt;来源：9 月 8 日周老师通知 · 版本 1&lt;/p&gt;&lt;p&gt;运动服、运动鞋、水杯；适用于全班。&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;sc-surface&quot;&gt;&lt;div class=&quot;sc-row&quot;&gt;&lt;h3&gt;费用公示查看方式&lt;/h3&gt;${badge(&#x27;可用于 AI&#x27;)}&lt;/div&gt;&lt;p class=&quot;sc-muted&quot;&gt;来源：班级办事说明 · 版本 2&lt;/p&gt;&lt;p&gt;进入费用页面查看缴费、支出和结余。&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;sc-note&quot;&gt;公共知识不包含个人缴费明细、学生个案或反馈投诉；AI 不受理或代转达问题。&lt;/div&gt;&lt;/div&gt;`;
+if(state.page===&#x27;compose&#x27;)html=`${back(&#x27;manage&#x27;)}${title(&#x27;发布日常任务&#x27;,&#x27;从模板开始，确认日期与接收范围&#x27;)}&lt;div class=&quot;sc-fields&quot;&gt;&lt;label class=&quot;sc-field&quot;&gt;任务类型&lt;select id=&quot;sc-task-type&quot;&gt;&lt;option&gt;通知&lt;/option&gt;&lt;option&gt;作业通知&lt;/option&gt;&lt;option&gt;准备事项&lt;/option&gt;&lt;option&gt;信息采集&lt;/option&gt;&lt;option&gt;待办&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;label class=&quot;sc-field&quot;&gt;标题&lt;input id=&quot;sc-task-title&quot; value=&quot;周四美术课准备彩纸&quot;&gt;&lt;/label&gt;&lt;label class=&quot;sc-field&quot;&gt;内容&lt;textarea id=&quot;sc-task-body&quot;&gt;请准备彩纸和固体胶，在美术课前带到学校。&lt;/textarea&gt;&lt;/label&gt;&lt;label class=&quot;sc-field&quot;&gt;接收范围&lt;select id=&quot;sc-task-scope&quot;&gt;&lt;option&gt;全体学生&lt;/option&gt;&lt;option&gt;女生&lt;/option&gt;&lt;option&gt;男生&lt;/option&gt;&lt;option&gt;学生多选&lt;/option&gt;&lt;option&gt;合唱队&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;div id=&quot;sc-student-picks&quot; class=&quot;sc-hidden&quot;&gt;&lt;label class=&quot;sc-check&quot;&gt;&lt;input type=&quot;checkbox&quot; value=&quot;林小禾&quot; checked&gt;林小禾&lt;/label&gt;&lt;label class=&quot;sc-check&quot;&gt;&lt;input type=&quot;checkbox&quot; value=&quot;林小满&quot;&gt;林小满&lt;/label&gt;&lt;/div&gt;&lt;label class=&quot;sc-field&quot;&gt;截止时间&lt;input id=&quot;sc-task-deadline&quot; type=&quot;datetime-local&quot; value=&quot;2026-09-10T08:00&quot;&gt;&lt;/label&gt;&lt;label class=&quot;sc-check&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;sc-task-confirm&quot; checked&gt;需要亲属确认完成&lt;/label&gt;&lt;/div&gt;&lt;div class=&quot;sc-actions&quot;&gt;&lt;button class=&quot;sc-btn&quot; data-action=&quot;preview-publish&quot; type=&quot;button&quot;&gt;预览接收范围&lt;/button&gt;&lt;/div&gt;`;
+if(state.page===&#x27;publish-preview&#x27;&amp;&amp;state.draft)html=`${back(&#x27;compose&#x27;)}${title(&#x27;发布预览&#x27;,&#x27;核对后生成通知与待办&#x27;)}&lt;div class=&quot;sc-surface&quot;&gt;&lt;h3&gt;${e(state.draft.title)}&lt;/h3&gt;&lt;p&gt;${e(state.draft.body)}&lt;/p&gt;&lt;div class=&quot;sc-spacer&quot;&gt;&lt;/div&gt;&lt;div class=&quot;sc-row&quot;&gt;&lt;span&gt;接收范围&lt;/span&gt;&lt;span&gt;${e(state.draft.scope)}&lt;/span&gt;&lt;/div&gt;&lt;p class=&quot;sc-muted&quot;&gt;${state.draft.count} 位学生 · 关联亲属接收&lt;/p&gt;&lt;p class=&quot;sc-muted&quot;&gt;截止：${e(state.draft.deadline.replace(&#x27;T&#x27;,&#x27; &#x27;))}&lt;/p&gt;&lt;p class=&quot;sc-muted&quot;&gt;${state.draft.confirm?&#x27;任一亲属确认代表该孩子完成&#x27;:&#x27;仅通知，无需完成&#x27;}&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;sc-spacer&quot;&gt;&lt;/div&gt;&lt;div class=&quot;sc-note&quot;&gt;站内通知发布后可查看。微信提醒仅向满足订阅条件的亲属发送。&lt;/div&gt;&lt;div class=&quot;sc-actions&quot;&gt;&lt;button class=&quot;sc-btn&quot; data-action=&quot;publish&quot; type=&quot;button&quot;&gt;确认发布&lt;/button&gt;&lt;/div&gt;`;
+if(state.page===&#x27;published&#x27;&amp;&amp;state.published)html=`${back()}${title(e(state.published.title),&#x27;刚刚发布 · &#x27;+e(state.published.scope))}&lt;div class=&quot;sc-surface&quot;&gt;&lt;p&gt;${e(state.published.body)}&lt;/p&gt;&lt;p class=&quot;sc-muted&quot;&gt;截止：${e(state.published.deadline.replace(&#x27;T&#x27;,&#x27; &#x27;))}&lt;/p&gt;${badge(&#x27;站内已发布&#x27;)}&lt;/div&gt;`;
+screen.innerHTML=html;
+if(globalThis.lucide)lucide.createIcons({attrs:{width:18,height:18}});
+}
+function ask(q){
+q=q.trim();if(!q){notice(&#x27;请输入一个公共事项问题&#x27;);return}
+let kind=&#x27;INSUFFICIENT_SOURCE&#x27;,answer=&#x27;目前可查的通知没有说明这一点，可以通过原有渠道向发布者确认。&#x27;;
+if(/投诉|反馈|骂|欠|没交|谁对|针对|健康|病|保证|一定|承诺|隐私|忽略|家境|成绩|电话|地址|转达|不负责|评价/.test(q)){kind=&#x27;OUT_OF_SCOPE&#x27;;answer=/保证|一定|承诺/.test(q)?&#x27;目前没有可确认的回复时间。具体沟通安排，请通过原有渠道直接向相关人员确认。&#x27;:&#x27;这类具体情况需要由相关人员沟通处理，请通过原有渠道直接联系老师或家委会。&#x27;}
+else if(/准备|带什么|体育/.test(q)){kind=&#x27;ANSWER&#x27;;answer=&#x27;根据 9 月 8 日周老师发布的体育课通知，明天请准备运动服、运动鞋和水杯。&#x27;}
+else if(/作业|数学/.test(q)){kind=&#x27;ANSWER&#x27;;answer=&#x27;当前演示资料没有数学作业页数，暂时无法确认。请查看老师发布的作业原通知。&#x27;;kind=&#x27;INSUFFICIENT_SOURCE&#x27;}
+state.qaQuestion=kind===&#x27;OUT_OF_SCOPE&#x27;?&#x27;&#x27;:q;state.qaKind=kind;state.qaAnswer=answer;if(kind===&#x27;OUT_OF_SCOPE&#x27;)state.qaQuestion=&#x27;已提交问题&#x27;;render();
+}
+root.addEventListener(&#x27;change&#x27;,ev=&gt;{if(ev.target.id===&#x27;sc-persona&#x27;){state.role=ev.target.value;go(isManager()?&#x27;manage&#x27;:&#x27;home&#x27;)}if(ev.target.id===&#x27;sc-task-scope&#x27;)root.querySelector(&#x27;#sc-student-picks&#x27;).classList.toggle(&#x27;sc-hidden&#x27;,ev.target.value!==&#x27;学生多选&#x27;)});
+root.addEventListener(&#x27;click&#x27;,ev=&gt;{const b=ev.target.closest(&#x27;button&#x27;);if(!b||!root.contains(b))return;if(b.dataset.go){go(b.dataset.go);return}if(b.dataset.schedule){state.scheduleTab=b.dataset.schedule;render();return}if(b.dataset.day){state.day=Number(b.dataset.day);render();return}if(b.dataset.finance){state.financeTab=b.dataset.finance;render();return}if(b.dataset.ask){ask(b.dataset.ask);return}
+const a=b.dataset.action;
+if(a===&#x27;complete&#x27;){state.done=true;render();notice(&#x27;林小禾的准备事项已确认完成；后续催办停止（演示）&#x27;)}
+if(a===&#x27;ack&#x27;){state.ack=true;render();notice(&#x27;已确认收到（演示），与准备完成状态分别记录&#x27;)}
+if(a===&#x27;external&#x27;)notice(&#x27;演示入口：真实腾讯文档跳转待接入验证，本次不会打开外部表单&#x27;);
+if(a===&#x27;submitted&#x27;){state.submitted=true;render();notice(&#x27;已保存亲属自报状态（演示），尚未核验外部提交&#x27;)}
+if(a===&#x27;swap&#x27;){if(state.role!==&#x27;teacher&#x27;&amp;&amp;state.role!==&#x27;admin&#x27;){notice(&#x27;当前身份未授予课程维护权限&#x27;);return}state.swapped=true;state.day=9;state.scheduleTab=&#x27;course&#x27;;go(&#x27;schedule&#x27;);notice(&#x27;临时调整已保存（演示）；未发送真实微信消息&#x27;)}
+if(a===&#x27;duty-change&#x27;){state.dutyChanged=true;state.day=9;state.scheduleTab=&#x27;duty&#x27;;go(&#x27;schedule&#x27;);notice(&#x27;新旧对象的安排已更新（演示）&#x27;)}
+if(a===&#x27;verify&#x27;){if(!root.querySelector(&#x27;#sc-reconcile-check&#x27;).checked){notice(&#x27;请先确认已核对实际流水&#x27;);return}state.verified=true;go(&#x27;finance&#x27;);notice(&#x27;已模拟复核入账，结余更新为 ¥1,050；没有实际交易&#x27;)}
+if(a===&#x27;ask&#x27;)ask(root.querySelector(&#x27;#sc-question&#x27;).value);
+if(a===&#x27;subscribe&#x27;)notice(&#x27;演示不调用微信授权；真实订阅状态需上线后由用户操作&#x27;);
+if(a===&#x27;join&#x27;){if(!root.querySelector(&#x27;input[name=&quot;sc-role&quot;]:checked&#x27;)){notice(&#x27;请至少选择一个身份&#x27;);return}state.joinSent=true;render();notice(&#x27;申请已提交（演示），不会自动获得管理权限或关联资格&#x27;)}
+if(a===&#x27;approve&#x27;){state.approved=true;render();notice(&#x27;模拟审批通过，奶奶可接收该孩子开放事项&#x27;)}
+if(a===&#x27;reject&#x27;)notice(&#x27;模拟退回：请核对班内孩子标识后重新申请&#x27;);
+if(a===&#x27;preview-publish&#x27;){
+let scope=root.querySelector(&#x27;#sc-task-scope&#x27;).value;let count=({全体学生:40,女生:19,男生:21,合唱队:8})[scope];if(scope===&#x27;学生多选&#x27;){let picks=[...root.querySelectorAll(&#x27;#sc-student-picks input:checked&#x27;)].map(x=&gt;x.value);if(!picks.length){notice(&#x27;请至少选择一位学生&#x27;);return}count=picks.length;scope=picks.join(&#x27;、&#x27;)}
+let titleText=root.querySelector(&#x27;#sc-task-title&#x27;).value.trim(),body=root.querySelector(&#x27;#sc-task-body&#x27;).value.trim(),deadline=root.querySelector(&#x27;#sc-task-deadline&#x27;).value;if(!titleText||!body||!deadline){notice(&#x27;请填写标题、内容和截止时间&#x27;);return}state.draft={title:titleText,body,deadline,scope,count,confirm:root.querySelector(&#x27;#sc-task-confirm&#x27;).checked};go(&#x27;publish-preview&#x27;)}
+if(a===&#x27;publish&#x27;){state.published={...state.draft};go(&#x27;home&#x27;);notice(&#x27;任务已模拟发布，可在首页查看；未发送真实提醒&#x27;)}
+});
+render();
+if(globalThis.Tweak){const tweaks=new Tweak({container:root,onChange:render});tweaks.addSelect(state,&#x27;accent&#x27;,{label:&#x27;配色&#x27;,options:[{label:&#x27;青禾绿&#x27;,value:&#x27;jade&#x27;},{label:&#x27;书页蓝&#x27;,value:&#x27;blue&#x27;}]});tweaks.addSlider(state,&#x27;radius&#x27;,{label:&#x27;圆角&#x27;,min:8,max:24,step:2,unit:&#x27;px&#x27;})}
+})();
+&lt;/script&gt;
+&lt;/div&gt;
+
+&lt;script src=&quot;https://unpkg.com/@floating-ui/core@1.7.3/dist/floating-ui.core.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;https://unpkg.com/@floating-ui/dom@1.7.4/dist/floating-ui.dom.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  if (window.FloatingUIDOM == null) {
+    return;
+  }
+  const { autoUpdate, computePosition, flip, offset, shift, size } =
+    window.FloatingUIDOM;
+  const tooltipPlacements = new Set([&quot;top&quot;, &quot;right&quot;, &quot;bottom&quot;, &quot;left&quot;]);
+  const tooltipId = `codex-visualization-tooltip-${
+    window.crypto?.randomUUID?.() ?? Date.now().toString(36)
+  }`;
+  const tooltipGap = 5;
+  const hoverDelay = 700;
+  const skipDelay = 300;
+  let activeTrigger = null;
+  let pendingTrigger = null;
+  let tooltip = null;
+  let openTimeout = null;
+  let autoUpdateCleanup = null;
+  let positionRequest = 0;
+  let skipDelayUntil = 0;
+  let lastPointerWasTouch = false;
+  let pinnedByTouch = false;
+
+  const getTrigger = (target) =&gt;
+    target?.nodeType === Node.ELEMENT_NODE
+      ? target.closest(&quot;[data-tooltip]&quot;)
+      : null;
+  const containsTarget = (trigger, target) =&gt;
+    target?.nodeType != null &amp;&amp; trigger.contains(target);
+  const getContent = (trigger) =&gt;
+    trigger.getAttribute(&quot;data-tooltip&quot;)?.trim() ?? &quot;&quot;;
+  const getPlacement = (trigger) =&gt; {
+    const placement = trigger.getAttribute(&quot;data-tooltip-placement&quot;);
+    return tooltipPlacements.has(placement) ? placement : &quot;top&quot;;
+  };
+  const getTooltip = () =&gt; {
+    if (tooltip == null) {
+      tooltip = document.createElement(&quot;div&quot;);
+      tooltip.id = tooltipId;
+      tooltip.className = &quot;tooltip&quot;;
+      tooltip.setAttribute(&quot;role&quot;, &quot;tooltip&quot;);
+    }
+    return tooltip;
+  };
+  const setDescribedBy = (trigger, described) =&gt; {
+    const ids = new Set(
+      (trigger.getAttribute(&quot;aria-describedby&quot;) ?? &quot;&quot;)
+        .split(/\s+/)
+        .filter(Boolean),
+    );
+    if (described) {
+      ids.add(tooltipId);
+    } else {
+      ids.delete(tooltipId);
+    }
+    if (ids.size === 0) {
+      trigger.removeAttribute(&quot;aria-describedby&quot;);
+    } else {
+      trigger.setAttribute(&quot;aria-describedby&quot;, [...ids].join(&quot; &quot;));
+    }
+  };
+  const clearOpenTimeout = () =&gt; {
+    if (openTimeout != null) {
+      window.clearTimeout(openTimeout);
+      openTimeout = null;
+    }
+    pendingTrigger = null;
+  };
+  const closeTooltip = (activateSkipDelay = true) =&gt; {
+    clearOpenTimeout();
+    pinnedByTouch = false;
+    positionRequest += 1;
+    autoUpdateCleanup?.();
+    autoUpdateCleanup = null;
+    if (activeTrigger == null) {
+      return;
+    }
+    setDescribedBy(activeTrigger, false);
+    activeTrigger = null;
+    tooltip?.remove();
+    if (activateSkipDelay) {
+      skipDelayUntil = Date.now() + skipDelay;
+    }
+  };
+  const updatePosition = (trigger, floating) =&gt; {
+    const request = ++positionRequest;
+    void computePosition(trigger, floating, {
+      middleware: [
+        offset(tooltipGap),
+        flip({ padding: tooltipGap }),
+        shift({ padding: tooltipGap }),
+        size({
+          padding: tooltipGap,
+          apply({ availableHeight, availableWidth, elements }) {
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-width&quot;,
+              `${Math.max(0, availableWidth)}px`,
+            );
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-height&quot;,
+              `${Math.max(0, availableHeight)}px`,
+            );
+          },
+        }),
+      ],
+      placement: getPlacement(trigger),
+      strategy: &quot;fixed&quot;,
+    })
+      .then(({ x, y }) =&gt; {
+        if (activeTrigger !== trigger || request !== positionRequest) {
+          return;
+        }
+        const scale = window.devicePixelRatio || 1;
+        floating.style.transform = `translate(${Math.round(x * scale) / scale}px, ${Math.round(y * scale) / scale}px)`;
+        floating.style.visibility = &quot;visible&quot;;
+      })
+      .catch(() =&gt; {
+        if (activeTrigger === trigger &amp;&amp; request === positionRequest) {
+          closeTooltip(false);
+        }
+      });
+  };
+  const openTooltip = (trigger) =&gt; {
+    const content = getContent(trigger);
+    if (!trigger.isConnected || content.length === 0) {
+      return;
+    }
+    clearOpenTimeout();
+    if (activeTrigger === trigger) {
+      return;
+    }
+    closeTooltip();
+    const floating = getTooltip();
+    floating.textContent = content;
+    floating.style.visibility = &quot;hidden&quot;;
+    floating.style.transform = &quot;translate(0, 0)&quot;;
+    document.body.appendChild(floating);
+    activeTrigger = trigger;
+    setDescribedBy(trigger, true);
+    autoUpdateCleanup = autoUpdate(trigger, floating, () =&gt; {
+      updatePosition(trigger, floating);
+    });
+  };
+  const requestOpen = (trigger, immediate = false) =&gt; {
+    if (
+      getContent(trigger).length === 0 ||
+      activeTrigger === trigger ||
+      pendingTrigger === trigger
+    ) {
+      return;
+    }
+    clearOpenTimeout();
+    pendingTrigger = trigger;
+    const delay =
+      immediate || activeTrigger != null || Date.now() &lt; skipDelayUntil
+        ? 0
+        : hoverDelay;
+    if (delay === 0) {
+      openTooltip(trigger);
+      return;
+    }
+    openTimeout = window.setTimeout(() =&gt; {
+      openTimeout = null;
+      pendingTrigger = null;
+      openTooltip(trigger);
+    }, delay);
+  };
+  const handlePointerOpen = (event) =&gt; {
+    if (event.pointerType === &quot;touch&quot;) {
+      return;
+    }
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    requestOpen(trigger);
+  };
+  const handlePointer = (event) =&gt; {
+    lastPointerWasTouch =
+      event.type === &quot;pointerdown&quot; &amp;&amp; event.pointerType === &quot;touch&quot;;
+  };
+  const handleTouchClick = (event) =&gt; {
+    const isTouch = event.pointerType === &quot;touch&quot; || lastPointerWasTouch;
+    lastPointerWasTouch = false;
+    if (!isTouch || event.detail === 0) {
+      return;
+    }
+    const trigger = getTrigger(event.target);
+    if (
+      trigger == null ||
+      !trigger.isConnected ||
+      getContent(trigger).length === 0 ||
+      (pinnedByTouch &amp;&amp; activeTrigger === trigger)
+    ) {
+      if (pinnedByTouch) {
+        closeTooltip();
+      }
+      return;
+    }
+    openTooltip(trigger);
+    pinnedByTouch = activeTrigger === trigger;
+    window.setTimeout(() =&gt; {
+      if (activeTrigger === trigger &amp;&amp; !trigger.isConnected) {
+        closeTooltip(false);
+      }
+    }, 0);
+  };
+  const handleLeave = (event) =&gt; {
+    if (pinnedByTouch) {
+      return;
+    }
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const handleFocusIn = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (trigger?.matches(&quot;:focus-visible&quot;)) {
+      requestOpen(trigger, true);
+    }
+  };
+  const handleKeyDown = (event) =&gt; {
+    if (event.key === &quot;Escape&quot;) {
+      closeTooltip();
+    }
+  };
+  const handleContextMenu = (event) =&gt; {
+    lastPointerWasTouch = false;
+    const trigger = getTrigger(event.target);
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const destroy = () =&gt; {
+    closeTooltip(false);
+    lastPointerWasTouch = false;
+    document.removeEventListener(&quot;pointerover&quot;, handlePointerOpen);
+    document.removeEventListener(&quot;pointerdown&quot;, handlePointer);
+    document.removeEventListener(&quot;pointercancel&quot;, handlePointer);
+    document.removeEventListener(&quot;click&quot;, handleTouchClick);
+    document.removeEventListener(&quot;pointerout&quot;, handleLeave);
+    document.removeEventListener(&quot;focusin&quot;, handleFocusIn);
+    document.removeEventListener(&quot;focusout&quot;, handleLeave);
+    document.removeEventListener(&quot;keydown&quot;, handleKeyDown);
+    document.removeEventListener(&quot;contextmenu&quot;, handleContextMenu);
+    tooltip = null;
+  };
+
+  document.addEventListener(&quot;pointerover&quot;, handlePointerOpen);
+  document.addEventListener(&quot;pointerdown&quot;, handlePointer);
+  document.addEventListener(&quot;pointercancel&quot;, handlePointer);
+  document.addEventListener(&quot;click&quot;, handleTouchClick);
+  document.addEventListener(&quot;pointerout&quot;, handleLeave);
+  document.addEventListener(&quot;focusin&quot;, handleFocusIn);
+  document.addEventListener(&quot;focusout&quot;, handleLeave);
+  document.addEventListener(&quot;keydown&quot;, handleKeyDown);
+  document.addEventListener(&quot;contextmenu&quot;, handleContextMenu);
+  window.addEventListener(&quot;pagehide&quot;, destroy, { once: true });
+})();
+&lt;/script&gt;
+&lt;script id=&quot;codex-visualization-tabs&quot;&gt;
+(() =&gt; {
+  const selector = &#x27;.nav[role=&quot;tablist&quot;] [role=&quot;tab&quot;]&#x27;;
+  const disabled = &#x27;:disabled,[aria-disabled=&quot;true&quot;]&#x27;;
+  const selectTab = (selected) =&gt; {
+    const panelId = selected.getAttribute(&quot;aria-controls&quot;);
+    for (const tab of selected.closest(&#x27;[role=&quot;tablist&quot;]&#x27;).querySelectorAll(&#x27;[role=&quot;tab&quot;]&#x27;)) {
+      const active = tab === selected;
+      tab.classList.toggle(&quot;active&quot;, active);
+      tab.setAttribute(&quot;aria-selected&quot;, String(active));
+      const id = tab.getAttribute(&quot;aria-controls&quot;);
+      const panel = id &amp;&amp; document.getElementById(id);
+      if (panel != null) {
+        panel.hidden = id !== panelId;
+        if (!panel.hidden &amp;&amp; selected.id) {
+          panel.setAttribute(&quot;aria-labelledby&quot;, selected.id);
+        }
+      }
+    }
+  };
+  const interact = (event) =&gt; {
+    const tab = event.target?.closest?.(selector);
+    if (event.defaultPrevented || tab == null || tab.matches(disabled)) {
+      return;
+    }
+    if (event.type === &quot;click&quot;) {
+      selectTab(tab);
+      return;
+    }
+    const tabs = Array.from(
+      tab.closest(&#x27;[role=&quot;tablist&quot;]&#x27;).querySelectorAll(&#x27;[role=&quot;tab&quot;]&#x27;),
+    ).filter((candidate) =&gt; !candidate.matches(disabled));
+    const current = tabs.indexOf(tab);
+    let next;
+    if (event.key === &quot;ArrowRight&quot; || event.key === &quot;ArrowDown&quot;) {
+      next = (current + 1) % tabs.length;
+    } else if (event.key === &quot;ArrowLeft&quot; || event.key === &quot;ArrowUp&quot;) {
+      next = (current + tabs.length - 1) % tabs.length;
+    } else if (event.key === &quot;Home&quot;) {
+      next = 0;
+    } else if (event.key === &quot;End&quot;) {
+      next = tabs.length - 1;
+    } else {
+      return;
+    }
+    event.preventDefault();
+    tabs[next].focus();
+    selectTab(tabs[next]);
+  };
+
+  for (const list of document.querySelectorAll(&#x27;.nav[role=&quot;tablist&quot;]&#x27;)) {
+    const selected =
+      list.querySelector(&#x27;[role=&quot;tab&quot;][aria-selected=&quot;true&quot;]&#x27;) ??
+      list.querySelector(&#x27;[role=&quot;tab&quot;].active&#x27;) ??
+      list.querySelector(&#x27;[role=&quot;tab&quot;]&#x27;);
+    if (selected != null) {
+      selectTab(selected);
+    }
+  }
+  document.addEventListener(&quot;click&quot;, interact);
+  document.addEventListener(&quot;keydown&quot;, interact);
+  window.addEventListener(&quot;pagehide&quot;, () =&gt; {
+    document.removeEventListener(&quot;click&quot;, interact);
+    document.removeEventListener(&quot;keydown&quot;, interact);
+  }, { once: true });
+})();
+&lt;/script&gt;
+&lt;script id=&quot;codex-visualization-lucide&quot; async src=&quot;https://unpkg.com/lucide@1.17.0/dist/umd/lucide.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  const initialize = () =&gt; {
+    globalThis.lucide?.createIcons({ attrs: { width: 16, height: 16 } });
+  };
+  if (globalThis.lucide != null) {
+    initialize();
+    return;
+  }
+  document
+    .getElementById(&quot;codex-visualization-lucide&quot;)
+    ?.addEventListener(&quot;load&quot;, initialize, { once: true });
+})();
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe>
+</body>
+</html>

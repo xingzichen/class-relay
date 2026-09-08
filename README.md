@@ -18,6 +18,7 @@
 - [可行性与平台验证](docs/feasibility-analysis.md)
 - [实施计划与验收](docs/implementation-plan.md)
 - [决策与待确认项](docs/decisions.md)
+- [Web 交互原型](原型图/index.html)（[本地打开说明](原型图/README.md)）
 
 ## 备选方案
 
