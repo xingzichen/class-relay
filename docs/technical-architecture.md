@@ -1,876 +1,166 @@
-# 微信群家委会智能维护系统技术架构
+# 技术架构：小程序与 NAS 后端
 
-## 1. 架构目标
+版本 0.2 · 2026-09-08。以下均为拟实施设计；NAS 型号、运行环境、小程序主体及平台能力尚未验证。
 
-本文定义当前已确认可落地部分的技术架构，覆盖：
+## 1. 总体方案
 
-- 微信网页版消息采集与受控发送；
-- DeepSeek Harness Agent运行；
-- 本地Qwen3.8-27B 6-bit视觉推理；
-- 群晖NAS上的长期知识库；
-- 中文全文、向量和重排混合检索；
-- 通知版本、任务、Case和证据追踪；
-- Agent直接动作决策；
-- Outbox、审计、备份和故障恢复。
+微信小程序承载亲属与管理入口；业务 API 负责权限和事务；数据库保存事实与回执；调度进程负责提醒；AI 只负责基于授权知识问答。
 
-架构不尝试解决微信扫码和安全验证自动化，也不依赖微信私有协议。
-
-## 2. 核心架构决策
-
-### ADR-001 业务内核与Agent分离
-
-业务内核拥有消息、知识、任务、权限和Outbox。DeepSeek Harness是可替换的推理运行时，不是事实源。
-
-### ADR-002 Agent直接决定最终动作
-
-Agent通过Typed Tool直接选择 `SEND`、`DEFER`、`IGNORE` 等动作。宿主不进行第二次语义审批，只执行机械权限和可靠性检查。
-
-### ADR-003 单PostgreSQL知识平台
-
-PostgreSQL保存事务数据，PGroonga提供中文全文检索，pgvector提供向量检索。首版不部署OpenSearch、Qdrant、Redis和独立消息中间件。
-
-### ADR-004 原始消息不可变
-
-原始消息和采集事件只追加。正式通知、摘要和任务均是可重建投影。
-
-### ADR-005 字段级证据
-
-Agent可用于回答的事实必须关联原始消息、附件页或图片区域。
-
-### ADR-006 本地优先
-
-群消息、附件、Embedding和主模型推理默认不离开局域网。
-
-## 3. 系统上下文
-
-![系统整体架构](./diagrams/system-overview.svg)
-
-[编辑 draw.io 源图](./diagrams/system-overview.drawio)
-
-系统分为微信接入、业务与Agent、模型与数据三个信任边界。DeepSeek Harness只负责推理编排，事实、权限、证据和发送状态均由业务内核持有。
-
-## 4. 部署拓扑
-
-![部署拓扑与信任边界](./diagrams/deployment-topology.svg)
-
-[编辑 draw.io 源图](./diagrams/deployment-topology.drawio)
-
-### 4.1 常开浏览器主机
-
-运行：
-
-- Chrome或Edge；
-- 微信网页版；
-- 自研Manifest V3扩展；
-- 可选本地Native Messaging Host；
-- 浏览器与插件健康监控。
-
-该主机需要人工完成扫码和安全验证。
-
-### 4.2 群晖NAS
-
-Docker Compose运行：
-
-- `knowledge-api`
-- `ingest-worker`
-- `agent-gateway`
-- `deepseek-harness`
-- `postgres-kb`
-- `admin-web`
-- `backup`
-
-NAS卷保存：
-
-- PostgreSQL数据；
-- 内容寻址附件；
-- 数据库备份；
-- Agent轨迹导出；
-- 模型处理临时文件。
-
-### 4.3 模型主机
-
-运行：
-
-- Qwen3.8-27B 6-bit OpenAI-compatible服务；
-- Qwen3-Embedding服务；
-- Qwen3-Reranker服务；
-- 可选图像预处理服务。
-
-模型主机通过受限局域网端口向NAS开放API，不对公网开放。
-
-## 5. 组件设计
-
-### 5.1 浏览器插件
-
-职责：
-
-- 识别当前登录状态；
-- 维护白名单群映射；
-- 观察消息列表DOM变化；
-- 检测白名单群未读并按策略导航；
-- 提取消息正文、发送者显示信息、时间和消息类型；
-- 下载或转交图片、文件；
-- 生成客户端观测ID；
-- 上报采集事件；
-- 获取Outbox发送任务；
-- 填充并发送消息；
-- 回报页面可观察到的发送结果；
-- 上报页面选择器和登录健康状态。
-
-插件不得：
-
-- 拦截或逆向微信私有协议；
-- 访问非白名单群；
-- 将数据库凭证存入扩展；
-- 执行任意Agent生成的JavaScript；
-- 自动处理验证码或安全验证。
-
-建议内部模块：
-
-```text
-extension/
-├─ content/
-│  ├─ group-detector
-│  ├─ message-observer
-│  ├─ message-parser
-│  └─ composer-driver
-├─ background/
-│  ├─ api-client
-│  ├─ outbox-poller
-│  └─ health-reporter
-├─ selectors/
-│  └─ versioned-selector-pack
-└─ options/
-   └─ connection-and-debug-ui
+```mermaid
+flowchart TD
+    U[老师 / 家委会 / 家长] --> MP[微信小程序]
+    MP --> EDGE[HTTPS 自有域名]
+    EDGE --> TUN[Cloudflare Tunnel]
+    subgraph NAS[NAS 私有容器网络]
+        TUN --> API[业务 API 与鉴权]
+        API --> DB[(PostgreSQL)]
+        API --> FILES[受控附件目录]
+        DB --> WORKER[任务调度与出站队列]
+        API --> RETRIEVE[权限过滤后的知识检索]
+    end
+    RETRIEVE --> LLM[可替换模型服务]
+    WORKER --> WX[微信订阅消息接口]
+    WX --> U
+    MP -.验证后跳转.-> DOC[腾讯文档 / 收集表]
 ```
 
-### 5.2 Knowledge API
+NAS 不托管小程序代码包，代码包提交微信。拟用 `api.giraffee.top` 作为业务入口，仅为规划名称，尚未配置 DNS、Tunnel 或证书。
 
-职责：
+## 2. 组件和部署选择
 
-- 认证插件和管理后台；
-- 接收标准消息Envelope；
-- 接收附件分块上传；
-- 创建幂等消息和事件；
-- 提供检索、任务和Case API；
-- 接收Agent动作工具调用；
-- 提供Outbox租约和发送回执；
-- 暴露健康、指标和管理接口。
+| 组件 | 首版建议 | 目的 |
+|---|---|---|
+| 客户端 | 原生微信小程序 + TypeScript | 原生身份、订阅授权和任务页面 |
+| API | TypeScript / Node.js 服务，框架实施时确定 | 统一权限、审批、任务和统计 |
+| 数据库 | PostgreSQL，版本实施时固定 | 单库事务、队列、业务状态与审计 |
+| 调度 | 同仓独立 worker 进程 | 持久化提醒、限频、失败恢复 |
+| 文件 | NAS 独立业务卷 + 鉴权下载 | 附件、备份、解析原文 |
+| 检索 | 首版结构化/关键词；按效果加 pgvector | 先保证权限与版本，再提升语义召回 |
+| AI | 可替换模型适配器 | 本地模型或云 API；硬件和服务尚未选定 |
+| 入口 | 现有 cloudflared 命名隧道候选 | 复用已有 NAS 连接，仍需小程序域名与实际网络验证 |
 
-推荐实现：TypeScript + Fastify/NestJS，或Python + FastAPI。若浏览器插件与DeepSeek Harness均以TypeScript为主，优先TypeScript以共享DTO和JSON Schema。
+不沿用旧方案的模型型号或 Agent Harness 作为既定依赖。无需为首版同时增加 Redis、专用向量库和复杂消息中间件。
 
-### 5.3 Ingest Worker
+## 3. 登录与授权
 
-职责：
+客户端通过微信登录取得临时代码，由后端完成微信会话交换并签发业务会话。AppSecret 和微信访问凭据只存在服务端；客户端不能自行声明 OpenID、角色或管理员能力。
 
-- 消费未处理消息事件；
-- 附件哈希、去重和安全检查；
-- 确定性解析PDF、Word和表格；
-- 调用视觉模型提取图片内容；
-- 创建检索单元；
-- 调用Embedding；
-- 触发Agent运行；
-- 执行重试和死信处理。
+业务用户以内部 UUID 标识，微信账户使用 `(appid, openid)` 唯一映射，不以昵称识别人，也不假定一定可获得 UnionID。首位系统管理员通过一次性部署初始化与已验证账户绑定。
 
-队列首版使用PostgreSQL任务表与 `FOR UPDATE SKIP LOCKED`，不引入Redis。
+每个请求重新校验有效账户、班级角色、委托能力和亲属关系；角色/关联撤销触发权限版本更新与缓存失效。授权规则的唯一规范见[身份与权限](permissions.md)。
 
-### 5.4 DeepSeek Harness
+## 4. 孩子关联流程
 
-职责：
-
-- 加载家委会Agent Profile；
-- 装配Skills和Typed Tools；
-- 驱动多步工具调用；
-- 保存Session事件和Tool Call轨迹；
-- 对每个消息事件输出最终动作；
-- 调用本地Qwen推理端点。
-
-建议将Harness封装在项目接口后：
-
-```ts
-interface ReasoningEngine {
-  processEvent(input: AgentEventInput): Promise<AgentRunResult>;
-  replay(input: ReplayInput): Promise<AgentRunResult>;
-}
+```mermaid
+sequenceDiagram
+    participant P as 申请亲属
+    participant A as 业务 API
+    participant R as 家委会委员及以上审批者
+    participant D as 数据库
+    P->>A: 提交孩子标识、亲属称谓
+    A->>D: 创建待审批申请
+    R->>A: 审批申请
+    A->>A: 检查班级权限且审批者不是申请人
+    A->>D: 原子更新申请 + 生效关系 + 审计 + 站内消息
+    A-->>P: 已通过 / 已拒绝
 ```
 
-并提供：
+审批事件同时驱动开放事项的接收关系同步。失败重试依赖事件 ID 幂等，不重复创建绑定、收件记录或任务实例。
 
-```text
-DeepSeekHarnessReasoningEngine
-DirectQwenReasoningEngine
+## 5. 发布与分发事务
+
+1. 验证发布权限、任务字段、范围和预览版本。提交时名册/群组已变化则要求重新预览。
+2. 在事务中生成任务版本、学生目标快照、完成实例、接收人关联、站内消息、提醒计划和 outbox 事件。
+3. 发布返回成功代表业务已保存，微信发送在事务外异步执行。
+4. 按目标学生展开有效亲属；同一亲属对应多个目标孩子，保留多个学生完成实例，但同任务同轮次同提醒时点只发一条卡片，详情列出其有权处理的孩子。
+5. 无亲属学生保留实例，提醒管理者补齐关系；发送失败不回滚正式通知。
+
+后续新增亲属只同步开放事项。学生移出目标、离班、关联撤销等事件将未完成分配标记撤销并取消待发；已完成历史和撤销原因保留，统计分母按当前有效分配计算并可查看历史快照。
+
+## 6. 完成粒度与采集关联
+
+- `PER_STUDENT`：任务 × 目标学生 × 完成轮次一个实例，任一有效亲属完成，记录真实执行者。
+- `PER_RELATIVE`：任务 × 目标学生 × 有效亲属 × 完成轮次一个实例；新审批亲属在开放任务内新增实例，解除关联撤销其未完成实例。
+- 关联采集的催办待办使用同一 `completion_source_id`，完成/退回同源联动。仅作上下文链接的待办有独立完成源。
+- 外部提交状态、亲属自报、人工核验分开保存；是否必须核验在发布时指定。自报后暂停亲属提醒，核验失败退回后重新计算提醒。
+- 完成与调度事务使用同一实例版本/锁顺序。完成接口在提交前再次核对关联资格，不能只依赖页面打开时的旧权限。
+
+## 7. 提醒调度与可靠性
+
+业务层维护持久提醒计划，微信只是其中一个外发渠道。调度每分钟扫描可执行计划，以数据库行锁/租约避免多个 worker 同时取走一条记录。
+
+```mermaid
+flowchart TD
+    A[到达提醒时点] --> B{任务开放且实例未完成?}
+    B -- 否 --> C[取消或跳过]
+    B -- 是 --> D{关联与访问权限有效?}
+    D -- 否 --> C
+    D -- 是 --> E[更新站内待办提醒]
+    E --> F{满足微信订阅和模板条件?}
+    F -- 否 --> G[记录无法微信提醒]
+    F -- 是 --> H{免打扰 / 间隔 / 当日上限允许?}
+    H -- 否 --> I[重算下次有效时点或跳过]
+    H -- 是 --> J[发送前最终状态检查]
+    J --> K[调用微信接口并记录结果]
 ```
 
-后者用于故障诊断和Harness升级期间的备用路径。
+提醒默认策略见需求 FR-MSG-03。时间计算以 UTC 存储、Asia/Shanghai 展示及计算本地日上限。修改截止时间递增 `schedule_version`，使旧计划失效；重新确认递增 `completion_round`，不抹除旧回执。
 
-### 5.5 Qwen主模型服务
+幂等键建议：`task_id + completion_round + user_id + schedule_version + slot_id + channel`。多个孩子合并进此用户的 `target_instance_ids`。共享完成源的采集和待办以共同 `notification_group_id` 合并同一事件/时点，不能把不同目的的事项误合并。
 
-服务要求：
+微信调用成功只标 `API_ACCEPTED`，不标已读或已完成。临时明确失败采用有上限的退避重试，并检查截止时间；拒绝订阅、模板不可用等转 `BLOCKED`，不循环调用。调用超时或进程在发送后崩溃时转 `UNKNOWN`，在无平台查询/幂等保证时不自动重发该时点，向管理端展示待核对。未来提醒时点仍按有效策略执行。
 
-- OpenAI-compatible Chat Completions；
-- 图像输入；
-- Tool Call；
-- JSON Schema或稳定结构化输出；
-- 请求超时和并发限制；
-- 记录模型、量化和运行时版本；
-- 支持32K或64K实际上下文。
+完成可阻止尚未提交的发送；已进入第三方接口的请求可能与完成同时发生，不能保证卡片撤回。详情页始终展示最新状态。重启不补发整段停机期间的过期提醒，避免突发刷屏。
 
-首版建议并发为1～2，避免27B模型在图片与长上下文下内存抖动。Harness和Worker必须将模型繁忙视为可重试状态。
+## 8. 微信订阅适配器
 
-### 5.6 检索服务
+适配器维护模板配置、模板类型、用户授权观测记录、发送尝试及平台返回结果。客户端一次 `accept` 或设置开关不能被当作无限可用发送额度，服务端仍以实际模板权限和接口结果为准。
 
-职责：
+订阅入口放在发布后相关服务流程、接收任务或主动点击“开启提醒”等适合的用户操作中，不强制订阅才能入班。正式入口和可用模板必须通过真实主体、微信后台和真机验证，详见[平台验证](feasibility-analysis.md)。
 
-- 解析班级、学期、时间和事项过滤条件；
-- PGroonga中文全文检索；
-- pgvector语义检索；
-- RRF融合；
-- Qwen3-Reranker重排；
-- 过滤取消、被替代和失效知识；
-- 返回带字段级证据的候选上下文。
+服务通知内容使用模板允许字段，默认最小摘要和登录后详情路径。微信凭据集中缓存和刷新，避免各 worker 独立刷新；外发只调用官方接口，NAS 入站隧道不等于微信 API 出站固定 IP，如后台要求白名单需另行核验。
 
-### 5.7 Outbox
+## 9. 腾讯文档适配器
 
-Outbox是发送可靠性边界，不是语义审批器。
+存储 `provider`、文档标识/URL、跳转方式、提交确认模式、验证日期，不默认任何文档 URL 都能内嵌。
 
-职责：
+按可用性验证：受支持的小程序跳转 → 符合主体和业务域名条件的 web-view → 经真机验证的复制链接/操作指引。每种方式必须验证实际落点和返回体验；只展示无法访问的链接不算完成接入。
 
-- 保存Agent选择的最终发送动作；
-- 生成唯一 `decision_id`；
-- 只允许白名单可写群；
-- 执行长度和频率限制；
-- 向单个插件实例授予发送租约；
-- 接收成功、失败和未知状态；
-- 对未知结果采取保守重试策略；
-- 防止系统重启后重复发送。
+首版读取用户配置的链接，用户自行打开填写；应用不抓取外部表单内容。日后如接 API/回调，必须校验服务凭据/签名、事件去重，使用可信 submission ID 与任务/学生/亲属关联，不能依靠姓名匹配。外部文档身份不默认等同于本系统 OpenID。
 
-### 5.8 管理后台
+## 10. 知识库和 AI
 
-首版页面：
+通知/活动正式版本与人工知识条目作为来源，提取出的文本片段保留 `source_id`、`version`、班级与学生 ACL、有效时间。所有来源在检索之前完成权限过滤，答案生成前再次确认版本有效。
 
-- 系统健康与登录状态；
-- 群和身份绑定；
-- 原始消息与附件；
-- 通知、版本和证据；
-- 任务与周期模板；
-- 问题和Case；
-- Agent运行轨迹；
-- Outbox和发送回执；
-- Skill与模型版本；
-- 数据保留和备份状态；
-- 全局发送暂停。
+关键词查询可先行；语义索引与向量是可重建派生数据，不能独立决定权限。尚未完成索引更新时使用数据库当前原文或不回答，不能继续用失效向量。缓存键包含用户权限版本、孩子范围和知识版本。
 
-## 6. 标准消息Envelope
+AI 仅暴露授权检索能力，不提供身份审批、发布、回执修改和通知发送工具。用户问题、上传附件和外部文档均作为不可信文本，不能改变系统权限。引用点击经过业务 API 重新鉴权。
 
-插件与后端之间使用版本化Envelope：
+模型超时后返回知识原文入口；来源冲突或没有依据时记录待确认问题。对外部模型只提交已授权且必要的片段，正式接入前确认数据安排；本地模型硬件能力尚未验证。
 
-```json
-{
-  "schema_version": "1.0",
-  "observed_event_id": "01J...",
-  "observed_at": "2026-09-04T20:16:31+08:00",
-  "browser_session_id": "browser-session-01",
-  "group": {
-    "configured_group_id": "school-parent-group",
-    "display_name": "三年二班家长群",
-    "mode": "READ_ONLY"
-  },
-  "sender": {
-    "observed_identity": "dom-identity-or-fingerprint",
-    "display_name": "王老师"
-  },
-  "message": {
-    "observed_message_id": "client-observed-id",
-    "type": "text",
-    "sent_at": "2026-09-04T20:16:00+08:00",
-    "text": "请于周五放学前提交回执",
-    "quoted_message_id": null,
-    "attachments": []
-  },
-  "dom_signature": "selector-pack-v1"
-}
-```
+## 11. NAS 网络和数据保护
 
-服务器根据群、发送者、时间、文本、附件哈希和引用关系生成业务幂等键。插件观测ID不直接作为唯一真相。
+- 业务 API 独立容器/目录/凭据，只对隧道开放必要业务端口。数据库、模型、管理后台和 NAS 系统管理端口不直接公开。
+- 小程序业务 API 使用业务鉴权；不能依赖会跳浏览器登录页的 Cloudflare Access 保护小程序 API。管理维护入口可另设保护。
+- 附件通过受鉴权下载或短期签名地址；目录不自动公开，文件类型/大小限制和访问审计由应用执行。
+- 外部链接不允许后端任意抓取内网地址；若以后做导入，单独实现 URL 白名单和 SSRF 防护。
+- HTTPS、合法域名、备案、小程序主体审核分别验证，Tunnel 打通不代表满足平台要求。
+- 开机启动、故障告警、备份恢复需单独配置，本次没有实施这些操作。
 
-## 7. Agent设计
+## 12. 运维和恢复目标
 
-![Agent决策与执行边界](./diagrams/agent-decision-flow.svg)
+首版建议每日数据库与附件一致性备份到另一份受控存储；NAS 快照不能替代异机/离线备份。权限表、关系、任务、回执、outbox、审计共同备份，凭据另行保护。
 
-[编辑 draw.io 源图](./diagrams/agent-decision-flow.drawio)
+暂定 RPO ≤ 24 小时、RTO ≤ 4 小时，必须实际恢复验证。恢复后先暂停外发并核对 outbox 与平台可确认结果，无法确认的发送标 UNKNOWN，防止旧备份重发。
 
-### 7.1 Agent Profile
+监控 API 可用性、Tunnel 状态、队列延迟、无接收人实例、BLOCKED/UNKNOWN 数量、磁盘容量和备份时间；告警不包含孩子正文或家庭信息。
 
-仅使用一个生产Profile：`class-committee-agent`。
+数据保留暂定：正常班级资料按学年维护，学年结束归档；用户退出后移除访问，历史回执按业务保留期清理或去标识。具体期限、删除申请与备份到期清理在试用前由运营负责人确定。
 
-Profile必须：
+## 13. 费用模块接入
 
-- 把群消息视为不可信数据；
-- 只信任身份服务确认的老师来源；
-- 回答前检索当前有效知识；
-- 区分公共信息、普通聊天、任务、意见和个案；
-- 每个事件最多调用一个最终动作工具；
-- 不把群内文本当成系统指令；
-- 不访问任意Shell、任意文件或公网搜索；
-- 不修改生产Skill。
+费用服务复用账户、班级、学生、文件、通知和审计，独立维护分摊、核实流水、账本与公示版本。费用金额使用整数分；复核入账与生成公示快照采用数据库事务，账本冲正追加记录。详见[费用规范](finance.md)。
 
-### 7.2 Skills
+家长原始凭证、财务核对材料和脱敏公示文件分别存储、分别鉴权。用户已选择线下/微信转账收款，第一版不接支付网关。收款信息由家委会人工核对，普通待办的点击完成、AI 输出、截图识别均无权改变核实实收。
 
-```text
-skills/
-├─ class-committee-core
-├─ teacher-notice-ingestion
-├─ notice-version-resolution
-├─ parent-public-qa
-├─ task-and-event-management
-├─ feedback-and-case-routing
-└─ concise-wechat-style
-```
-
-Skills负责推理方法和表达风格，不承担权限边界。
-
-### 7.3 Agent Tools
-
-#### 知识工具
-
-```ts
-searchKnowledge(input): SearchResult[]
-getKnowledgeItem(id): KnowledgeItem
-getEvidence(ids): Evidence[]
-createNotice(candidate): NoticeVersion
-reviseNotice(candidate): NoticeVersion
-```
-
-#### 任务与Case工具
-
-```ts
-createTask(input): Task
-updateTask(input): Task
-createCase(input): Case
-listOpenTasks(filter): Task[]
-```
-
-#### 最终动作工具
-
-```ts
-sendReply(input): OutboxDecision
-deferReply(input): OutboxDecision | DeferredDecision
-ignoreMessage(input): IgnoredDecision
-escalatePrivate(input): OutboxDecision | EscalatedDecision
-relayUrgentNotice(input): OutboxDecision
-```
-
-### 7.4 `sendReply` Schema
-
-```json
-{
-  "target_group_id": "family-committee-group",
-  "reply_to_message_id": "msg-123",
-  "text": "根据王老师今天19:30更新的通知，明天8:30在学校东门集合，需要自带水杯。",
-  "source_message_ids": ["msg-456"],
-  "source_notice_version_ids": ["notice-v2"],
-  "decision_reason": "公共问题，当前有效通知提供完整依据",
-  "confidence_note": "时间、地点和物品均有原文证据"
-}
-```
-
-### 7.5 机械执行保护
-
-以下检查不改变Agent语义决定：
-
-- `target_group_id`必须为 `READ_WRITE`；
-- `reply_to_message_id`必须存在；
-- 来源ID必须存在；
-- Schema必须有效；
-- `decision_id`不得重复；
-- 系统不得处于全局暂停；
-- 不得超过频率和消息长度限制；
-- 不能回复测试账号自己发送的消息。
-
-检查失败时动作标记为 `REJECTED_BY_EXECUTION_GUARD`，记录原因，不自动改写为其他语义动作。
-
-## 8. 知识库架构
-
-### 8.1 数据分层
-
-![知识库分层与混合检索](./diagrams/knowledge-retrieval.svg)
-
-[编辑 draw.io 源图](./diagrams/knowledge-retrieval.drawio)
-
-知识写入侧将原始证据投影为可版本化的领域知识；查询侧在结构化约束内执行中文全文和向量双路召回，再经融合、重排与版本校验后交给Agent。
-
-### 8.2 关键表
-
-#### `messages`
-
-```text
-id UUID PK
-group_id UUID NOT NULL
-sender_identity_id UUID
-sent_at TIMESTAMPTZ
-captured_at TIMESTAMPTZ
-message_type TEXT
-text TEXT
-quoted_message_id UUID
-content_hash BYTEA
-raw_payload JSONB
-```
-
-#### `attachments`
-
-```text
-id UUID PK
-message_id UUID
-sha256 BYTEA UNIQUE
-mime_type TEXT
-size_bytes BIGINT
-storage_path TEXT
-extracted_text TEXT
-vision_description TEXT
-parse_status TEXT
-processor_version TEXT
-```
-
-#### `knowledge_items`
-
-```text
-id UUID PK
-class_id UUID
-term_id UUID
-kind TEXT
-canonical_title TEXT
-status TEXT
-created_at TIMESTAMPTZ
-```
-
-#### `notice_versions`
-
-```text
-id UUID PK
-knowledge_item_id UUID
-version_no INTEGER
-supersedes_version_id UUID
-published_at TIMESTAMPTZ
-valid_from TIMESTAMPTZ
-valid_to TIMESTAMPTZ
-status TEXT
-summary TEXT
-change_summary TEXT
-source_message_id UUID
-```
-
-#### `claims`
-
-```text
-id UUID PK
-notice_version_id UUID
-field_name TEXT
-normalized_value JSONB
-display_value TEXT
-valid_from TIMESTAMPTZ
-valid_to TIMESTAMPTZ
-status TEXT
-```
-
-#### `evidence_links`
-
-```text
-claim_id UUID
-message_id UUID
-attachment_id UUID
-source_text TEXT
-char_start INTEGER
-char_end INTEGER
-page_no INTEGER
-bbox JSONB
-```
-
-#### `retrieval_units`
-
-```text
-id UUID PK
-class_id UUID
-term_id UUID
-unit_type TEXT
-source_type TEXT
-source_id UUID
-content TEXT
-status TEXT
-valid_from TIMESTAMPTZ
-valid_to TIMESTAMPTZ
-metadata JSONB
-embedding HALFVector_or_Vector
-embedding_model TEXT
-embedding_version TEXT
-```
-
-### 8.3 中文全文检索
-
-使用PGroonga为以下字段建立索引：
-
-- `messages.text`
-- `attachments.extracted_text`
-- `notice_versions.summary`
-- `claims.display_value`
-- `retrieval_units.content`
-
-全文检索用于精确人名、活动名、材料、地点、时间词和通知原句匹配。
-
-### 8.4 向量检索
-
-首选Qwen3-Embedding系列。建议从1024维开始，并在记录中保存模型与版本。
-
-索引：
-
-- HNSW cosine；
-- B-tree过滤 `class_id`、`term_id`、`status`；
-- 按班级或学期增长情况决定是否分区；
-- 开启pgvector iterative scan以改善带过滤条件的召回。
-
-### 8.5 混合检索
-
-推荐流程见“知识库分层与混合检索”图。检索必须先限定班级、学期、状态和有效时间，再并行执行PGroonga Top 50与pgvector Top 50；融合与重排后必须再次校验通知版本，最终只向Agent提供Top 5～8条当前有效证据。
-
-RRF默认公式：
-
-```text
-score(d) = Σ 1 / (k + rank_i(d))
-```
-
-`k`作为可配置参数，初始可使用60，并通过真实问题集调优。
-
-### 8.6 图片知识
-
-图片处理一次、复用多次：
-
-1. 保存原图和SHA-256；
-2. 视觉模型输出OCR文本、描述、字段和区域；
-3. OCR文本与结构化字段进入全文和向量索引；
-4. Evidence保存bbox；
-5. 问答时优先使用提取文本；
-6. 需要视觉复核时再将原图或裁剪区域交给主模型。
-
-## 9. 任务与Case模型
-
-### 9.1 Task状态
-
-```text
-PLANNED
-OPEN
-WAITING_TEACHER
-WAITING_PARENTS
-IN_PROGRESS
-COMPLETED
-CANCELLED
-EXPIRED
-```
-
-### 9.2 Case状态
-
-```text
-NEW
-MERGED
-WAITING_CONFIRMATION
-RESPONDED
-ESCALATED_PRIVATE
-CLOSED
-```
-
-### 9.3 周期任务
-
-周期模板保存业务规则和日历规则，但每次执行生成独立Task实例。修改模板不得回写历史实例。
-
-## 10. 关键时序
-
-![老师通知入库与家长问题处理流程](./diagrams/message-processing-flows.svg)
-
-[编辑 draw.io 源图](./diagrams/message-processing-flows.drawio)
-
-### 10.1 老师通知入库
-
-老师消息先作为不可变原始事件落库，再异步完成附件解析、通知版本解析、字段级证据绑定和检索单元构建。新通知版本生效时保留旧版本以便回溯。
-
-### 10.2 家长问题自动发送
-
-Agent在检索当前有效证据后直接选择唯一最终动作。只有 `SEND` 进入Outbox并由插件取得租约执行；`DEFER`、`IGNORE` 和 `ESCALATE_PRIVATE` 不产生群内发送，但均保留决策轨迹。
-
-## 11. API边界
-
-### 11.1 插件API
-
-```text
-POST /v1/capture/messages
-POST /v1/capture/attachments/init
-PUT  /v1/capture/attachments/{uploadId}/parts/{partNo}
-POST /v1/capture/attachments/{uploadId}/complete
-POST /v1/browser/health
-POST /v1/outbox/lease
-POST /v1/outbox/{decisionId}/result
-```
-
-### 11.2 Agent Tool API
-
-```text
-POST /v1/tools/knowledge/search
-GET  /v1/tools/knowledge/items/{id}
-POST /v1/tools/knowledge/notices
-POST /v1/tools/knowledge/notices/{id}/versions
-POST /v1/tools/tasks
-PATCH /v1/tools/tasks/{id}
-POST /v1/tools/cases
-POST /v1/tools/actions/send
-POST /v1/tools/actions/defer
-POST /v1/tools/actions/ignore
-POST /v1/tools/actions/escalate-private
-```
-
-Agent凭证只能访问Tool API，不能访问管理API和数据库。
-
-## 12. 安全与信任边界
-
-### 12.1 不可信输入
-
-以下全部视为不可信：
-
-- 群消息；
-- 图片中的文字；
-- 文件内容；
-- 群昵称；
-- 外部链接；
-- 家长发出的“系统指令”。
-
-### 12.2 Agent权限
-
-生产Agent只允许：
-
-- 检索知识；
-- 创建或修订候选知识；
-- 管理任务和Case；
-- 调用最终动作工具。
-
-生产Agent禁止：
-
-- 任意Shell；
-- 任意文件系统访问；
-- 访问其他群数据；
-- 公网浏览；
-- 修改自身Skill；
-- 修改群白名单；
-- 获取数据库凭证；
-- 执行浏览器脚本。
-
-### 12.3 网络
-
-建议Docker网络：
-
-```text
-edge-net       knowledge-api / reverse-proxy
-app-net        api / worker / harness / admin
-data-net       api / worker / postgres
-model-net      harness / embedding-client / model-host
-```
-
-PostgreSQL只加入 `data-net`。模型端点通过防火墙仅允许NAS地址访问。
-
-## 13. 可靠性设计
-
-### 13.1 幂等键
-
-关键幂等键：
-
-- `capture_dedup_key`
-- `processing_job_id`
-- `agent_run_id`
-- `decision_id`
-- `outbox_delivery_id`
-
-### 13.2 Outbox状态
-
-```text
-PENDING
-LEASED
-SENDING
-SENT
-FAILED_RETRYABLE
-FAILED_FINAL
-UNKNOWN
-REJECTED_BY_EXECUTION_GUARD
-PAUSED
-```
-
-对于发送结果 `UNKNOWN`，不得立即盲目重发。插件先查询页面最近自发消息，若能匹配文本和时间则补记 `SENT`；无法判断时进入人工检查队列。
-
-### 13.3 故障处理
-
-| 故障 | 行为 |
-|---|---|
-| 模型离线 | Job退避重试，不阻塞采集 |
-| NAS暂时离线 | 插件本地保存有限待上传队列 |
-| 浏览器离线 | Outbox保持PENDING |
-| 选择器失效 | 暂停发送并报警 |
-| 数据库故障 | API拒绝新发送，避免无审计操作 |
-| Embedding失败 | 保留全文索引，后台重试向量 |
-| Reranker失败 | 使用RRF结果降级 |
-| Harness失败 | Job重试或进入死信，不直接发送 |
-
-## 14. 可观测性
-
-### 14.1 指标
-
-- 每群最后采集时间；
-- 消息捕获数量和重复数量；
-- 附件解析成功率；
-- Agent运行延迟、Token和错误率；
-- 动作分布；
-- `SEND`来源数量；
-- Outbox积压和失败；
-- 浏览器登录与选择器状态；
-- 数据库容量与索引大小；
-- 备份成功和最近恢复演练时间。
-
-### 14.2 日志
-
-日志使用结构化JSON，包含：
-
-```text
-trace_id
-message_id
-agent_run_id
-decision_id
-group_id
-component
-event
-duration_ms
-error_code
-```
-
-禁止在普通运行日志中完整打印群消息、附件文本、模型Prompt和密钥。
-
-## 15. 备份与恢复
-
-### 15.1 数据库
-
-- PostgreSQL WAL归档；
-- pgBackRest全量、差异和增量备份；
-- 定期逻辑导出关键配置与知识表；
-- 每月至少一次恢复演练；
-- 备份记录PostgreSQL和扩展版本。
-
-### 15.2 附件
-
-- NAS Btrfs快照；
-- 内容寻址目录校验；
-- 数据库备份与附件快照使用一致批次标记；
-- 重要数据保留一份加密离线或异地副本。
-
-### 15.3 恢复目标
-
-初始目标：
-
-- RPO：24小时，启用WAL后目标可降至15分钟以内；
-- RTO：4小时；
-- 浏览器登录和模型服务不包含在数据库RTO内。
-
-## 16. 数据保留与清理
-
-清理Job根据数据类别工作：
-
-1. 查找超过保留期的原始聊天；
-2. 检查是否仍被有效通知、Claim、Case或审计引用；
-3. 对仍有必要的记录先匿名化；
-4. 删除无引用附件；
-5. 重建或清理全文和向量索引；
-6. 写入删除审计。
-
-禁止仅删除数据库记录而遗留NAS附件。
-
-## 17. 扩展路线
-
-当单PostgreSQL出现明确瓶颈后，可通过稳定接口替换：
-
-```ts
-interface LexicalSearchProvider {}
-interface VectorSearchProvider {}
-interface AttachmentStore {}
-interface ReasoningEngine {}
-```
-
-潜在扩展：
-
-- `LexicalSearchProvider` → OpenSearch
-- `VectorSearchProvider` → Qdrant或OpenSearch
-- `AttachmentStore` → S3兼容对象存储
-- `ReasoningEngine` → 新版Harness或直接模型工作流
-
-事实、版本、任务、权限和Outbox仍留在PostgreSQL。
-
-## 18. 建议仓库结构
-
-```text
-apps/
-├─ browser-extension/
-├─ knowledge-api/
-├─ ingest-worker/
-├─ admin-web/
-└─ agent-gateway/
-packages/
-├─ contracts/
-├─ database/
-├─ retrieval/
-├─ wechat-domain/
-├─ agent-tools/
-└─ observability/
-agent/
-├─ profiles/
-├─ skills/
-├─ plugins/
-└─ evaluations/
-infra/
-├─ compose/
-├─ postgres-image/
-├─ migrations/
-├─ backup/
-└─ monitoring/
-docs/
-tests/
-├─ fixtures/
-├─ replay/
-├─ integration/
-└─ e2e/
-```
-
-## 19. 第一批技术验证
-
-按顺序完成：
-
-1. 微信网页版登录与目标群访问；
-2. 当前群与后台未读消息采集；
-3. 自发消息识别和发送回执；
-4. Qwen3.8 6-bit图片输入；
-5. Qwen3.8 6-bit Tool Call和JSON Schema；
-6. PostgreSQL + PGroonga + pgvector自定义镜像；
-7. 单条老师通知的结构化提取与证据入库；
-8. 修改通知的版本链；
-9. 混合检索与来源回答；
-10. Agent `SEND / DEFER / IGNORE` 影子运行；
-11. Outbox重启和未知发送结果测试；
-12. 7天持续运行测试。
-
-## 20. 当前不可落地或不能保证的部分
-
-- 无人值守通过微信扫码和安全验证；
-- 获取微信网页未同步、未加载的消息；
-- 在微信网页改版后保持零维护；
-- 保证个人微信自动化符合平台当前及未来规则；
-- 对家校争议作出完全自动、无风险的判断；
-- 在没有老师原文或学校正式依据时提供确定答案。
-
-这些限制必须在产品界面、运行手册和家委会预期中明确说明。
-
-## 21. 参考资料
-
-- [DeepSeek Harness架构](https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/architecture.md)
-- [Qwen3.8-27B](https://huggingface.co/Qwen/Qwen3.8-27B)
-- [pgvector](https://github.com/pgvector/pgvector)
-- [PGroonga](https://pgroonga.github.io/)
-- [Qwen3 Embedding](https://huggingface.co/collections/Qwen/qwen3-embedding)
+AI 的费用查询通过只读公示接口获取数据库计算的金额与版本；班内逐孩子公示信息可供相同权限用户查询，私有家庭任务和原始交易凭证仍隔离。备份恢复需要将账本、公示版本、凭证和复核记录一起校验。
