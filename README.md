@@ -10,6 +10,7 @@
 - [产品需求](docs/requirements.md)
 - [身份与权限](docs/permissions.md)
 - [AI 回复范围与语气红线](docs/ai-response-policy.md)
+- [腾讯云 AI 能力与实施设计](docs/ai-cloudbase-design.md)
 - [课程表、值日表与临时调整](docs/schedules.md)
 - [腾讯云能力评估](docs/cloudbase-capability-assessment.md)
 - [技术架构](docs/technical-architecture.md)

@@ -1,6 +1,6 @@
 # 数据模型、状态与接口草案
 
-版本 0.3 · 2026-09-08。为设计模型，尚未创建云数据库集合、索引、安全规则或实现云函数。权限以[身份与权限](permissions.md)为准，业务语义以[需求](requirements.md)为准。
+版本 0.4 · 2026-09-09。为设计模型，尚未创建云数据库集合、索引、安全规则或实现云函数。权限以[身份与权限](permissions.md)为准，业务语义以[需求](requirements.md)为准。
 
 ## 1. 实体
 
@@ -38,8 +38,12 @@
 | notification_deliveries | task_id, notification_group_id, user_id, target_instance_ids, round, slot_id, channel, status, idempotency_key | 唯一幂等键；记录具体尝试结果与错误码 |
 | subscription_observations | user_id, template_id, observed_choice, observed_at | 授权观测不是无限额度，也不等同于实际剩余次数 |
 | knowledge_entries/versions | class_id, title, body, source, version, status, audience_acl, ai_eligible, reusable_category, valid_from/to, authority_level | 版本、问答适用标记和可见范围不得丢失 |
-| knowledge_chunks | source_id, source_version, text, acl, embedding_version | 派生索引可重建；查询须校验当前源 |
-| qa_jobs/answers | user_id, authorized_scope, kind, source_versions, safe_answer, model_version, policy_version, expires_at | 只处理公共可复用事项；越界输入不存原文，异步结果按用户鉴权 |
+| knowledge_chunks | source_id, source_version, chunk_no, text, metadata, acl, index_revision, embedding_version | 派生索引可重建；查询前后均校验当前源和权限 |
+| qa_jobs/answers | user_id, authorized_scope, kind, source_versions, safe_answer, model_id, policy_version, permission_version, expires_at | 只处理公共可复用事项；越界输入不存原文，异步结果按用户重新鉴权 |
+| ai_policy_versions | version, system_rule_hash, redline_rules, fallback_templates, status | 提示规则、输出检查和固定回退一起版本化 |
+| ai_answer_cache | query_key, permission_version, source_versions, policy_version, model_id, safe_answer, expires_at | 只缓存正常公共问答；任一依赖版本变化即失效 |
+| ai_usage_daily | class_id, date, calls, input_tokens, output_tokens, failures, blocked_count | AI 预算、限流和运营观察，不存问题全文 |
+| ai_eval_runs | model_id, policy_version, case_set_version, result_summary, released_at | 模型或策略上线验收证据 |
 | audit_events | actor_id, action, scope, entity_id, before/after_version, reason, timestamp | 管理、审批、任务和知识变更追加日志 |
 
 ## 2. 关键约束
@@ -109,13 +113,16 @@
 | completion / complete | 亲属完成或自报已填写 | 有效关联、轮次、开放状态 |
 | completion / review | 核验/退回/代登记 | 管理权限、原因 |
 | tasks / report | 统计 | 管理范围或自己孩子摘要 |
-| knowledge / saveVersion | 管理公共知识版本 | 来源、可见范围、公共可复用标记 |
-| qa / ask, getResult | 公共事项问答 | 用户权限、业务白名单、回复红线及作业归属 |
+| knowledge / saveVersion, disableForAI | 管理公共知识版本或停止 AI 使用 | 来源、可见范围、公共可复用标记、预期修订；停用先阻断新问答再清理索引 |
+| qa / ask, getResult, getSource | 公共事项问答及来源读取 | 用户权限、业务白名单、来源版本、回复红线及结果读取时重新鉴权 |
+| aiAdmin / setPolicy, pause | 发布已验收策略或暂停模型生成 | 系统管理员权限、策略验收记录；暂停不影响原文查询 |
 | files / prepareUpload, finalizeUpload, authorizeRead | 受控文件访问 | 路径/元数据/对象权限，不接受任意 fileID 授权 |
 
 内部函数 `dispatchWorker`、`reminderScheduler`、`financePublisher`、`maintenance` 只接受受信触发器或服务角色调用，不接受客户端伪造内部身份。长期作业由数据库保存游标、租约与重试状态。
 
-必要查询索引包括：成员 user_id/class_id/status、学生 class_id/status、任务 class_id/lifecycle、关系 user_id/student_id/status、计划 state/next_due、作业 state/lease_until、知识 class_id/status/keyword、账本 class_id/ledger_revision。具体复合索引和查询分页在实施中验证；事务内按明确 doc ID 操作，查候选后重新校验版本。
+必要查询索引包括：成员 user_id/class_id/status、学生 class_id/status、任务 class_id/lifecycle、关系 user_id/student_id/status、计划 state/next_due、作业 state/lease_until、知识 class_id/status/ai_eligible/valid_from、知识关键词/类别、AI 作业 user_id/state、用量 class_id/date、账本 class_id/ledger_revision。具体复合索引和查询分页在实施中验证；事务内按明确 doc ID 操作，查候选后重新校验版本。
+
+AI 的字段、失效规则、调用契约和最少审计要求以[腾讯云 AI 能力与实施设计](ai-cloudbase-design.md)为准。
 
 未列出的列表、撤销和归档命令须沿用同一鉴权规范，不新增反馈工单或争议处理接口。
 
