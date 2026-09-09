@@ -1,6 +1,6 @@
 # 课程表、值日表与临时调整
 
-版本 0.3 · 2026-09-08。用户已要求课程表、值日表、老师串课及值日调整。以下周期、权限和通知细节为可调整的实施默认值，全部使用腾讯云开发。
+版本 0.6 · 2026-09-10。用户已要求课程表、值日表、老师串课及值日调整。周期、权限和通知按已采纳规则实施，具体窗口等技术参数保留为实施默认；全部使用腾讯云开发。
 
 ## 1. 基础安排（FR-SCH-01 / FR-DUTY-01）
 
@@ -26,11 +26,11 @@ AI 可说明有权查看的公共课程安排、物品要求、值日规则和�
 - 默认调整仅针对选定日期；要改长期周表需使用“修改基础表”并选择新的生效日期。
 - 校验同班时间重叠、目标节次存在性、同一教师在系统已登记班级中的重复占用。无法掌握全校课表时不能承诺无全校冲突，发布预览注明校验覆盖范围。
 
-系统管理员或对所有涉及班级有课程维护权的老师可发布调整。跨班串课只有在操作者对双方均有权限且校验通过时才整体生效；不允许单边提交。家委会默认可查看，课程编辑可由系统管理员/老师显式委托。
+系统管理员、对所有涉及班级有默认课程维护权的老师或显式获得 `schedule.course.manage` 的受托者可发布调整。该能力包括编辑、发布与撤销。跨班串课只有在操作者对双方均有权限且校验通过时才整体生效；不允许单边提交。家委会默认可查看，课程编辑可由系统管理员/老师显式委托。
 
 ## 4. 临时值日调整（FR-DUTY-03）
 
-系统管理员、所属班级老师、家委会委员共同维护值日表。支持换人、换组、换日期、换时段、增加/取消一次值日，发布前显示调整前后对象及提醒范围。
+系统管理员、所属班级老师、家委会委员及显式获得 schedule.duty.manage 的受托者在授权范围维护值日表。支持换人、换组、换日期、换时段、增加/取消一次值日，发布前显示调整前后对象及提醒范围。
 
 值日调整默认仅作用指定日期，不修改基础轮值。以新旧学生集合的并集计算变更通知收件人：被移出的家庭也需知道无需再按旧安排执行。理由只填写必要的公共安排说明，不要求输入疾病、家庭困难等私人原因。
 
@@ -46,10 +46,10 @@ AI 可说明有权查看的公共课程安排、物品要求、值日规则和�
 
 ## 6. 通知、待办和准备清单联动（FR-SCH-05 / FR-DUTY-04）
 
-- 课程变更默认通知受影响班级学生的有效亲属；同一亲属多个孩子去重外发，详情列出其相关变化。
-- 值日变更通知旧/新对象并集，通知正文中仅给当前家庭必要信息，不能把私人原因带进卡片。
+- 课程变更建立受影响家庭的站内告知，外发遵循家庭偏好、同接收人每日总计四次/变更两次及两小时间隔、免打扰、订阅条件；同一亲属多孩子去重。
+- 值日变更生成独立 CHANGE_NOTICE，通知旧/新对象并集，旧家庭仅可读“你的值日已取消/移出”等必要内容。旧催办及私有任务访问停止；已完成不阻断必要告知，关联撤销/退班/停用仍阻断。
 - 准备事项可关联当次课程/值日，如“周三美术课带彩纸”。日期变化后其未完成待办截止和提醒随有效安排重算，保留调整记录。
-- 被取消/替换的旧实例立即失效，停止旧计划；新实例按新日期生成。不把旧完成回执直接复制到新要求。
+- 同一事件仅移动时间/地点且准备要求未变，保持 stable_event_id 与完成轮次，已完成保留，当前要求的截止随事件时间更新，但仅为未完成实例重算提醒；已完成回执原时间及轮次不改。取消事件停止执行；换入学生新增自己的待办，不继承旧学生回执。技术物化实例替换不得自行重置完成。
 - 仅改地点等不改变完成要求时，保留原完成回执；需要重新准备/确认时，管理者显式选择新完成轮次并说明公共原因。
 - 普通课表/值日查看不要求点击完成；需要家长准备/确认时才关联待办，按学生默认任一亲属确认；没有必要时不每天推送整张表。
 - 所有外发仍受微信订阅条件、免打扰与限频约束。站内日程更新成功不意味着微信提醒保证送达。
@@ -67,11 +67,11 @@ AI 可说明有权查看的公共课程安排、物品要求、值日规则和�
 | 集合 | 主要字段 |
 |---|---|
 | school_terms / teaching_calendar | class_id, start/end, teaching_week_anchor, holiday_dates, exceptional_days, version |
-| course_templates / duty_templates | class_id, term_id, slots, recurrence, valid_from/to, version, status |
-| schedule_changes | type, affected_dates, before_refs, after_chunks, source_versions, public_reason, publisher, status, revision |
-| schedule_instances | stable_event_id, class_id, date, slot/time, course_or_duty, target_snapshot, template_version, change_revision, status |
-| schedule_links | event_id, task_id, preparation_rule, follow_event_time, completion_round |
-| schedule_outbox | change_id, revision, audience_snapshot, cursor, state |
+| course_templates / duty_templates | class_id, owner_id, term_id, slots, recurrence, valid_from/to, version, status |
+| schedule_changes | type, affected_dates, before_refs, after_chunks, source_versions, public_reason, publisher_id, status, revision |
+| schedule_instances | stable_event_id, activity_id, class_id, date, slot/time, course_or_duty, target_snapshot, template_version, change_revision, status |
+| schedule_links | stable_event_id, task_id, preparation_rule, follow_event_time, completion_round |
+| schedule_outbox | change_id, revision, audience_snapshot, cursor, state；最小家庭告知写 change_notices，外发统一进入 notification_deliveries |
 
 `schedules` 云函数 action 包括 `saveTemplate`、`publishTemplate`、`getDay`、`getWeek`、`previewChange`、`publishChange`、`cancelChange`。所有命令检查班级、课程/值日管理权限、来源版本和受影响范围。
 
@@ -95,3 +95,6 @@ AI 可说明有权查看的公共课程安排、物品要求、值日规则和�
 | S10 | 调整前待办已完成，新要求需重新准备 | 只有显式重新确认才新建轮次，旧回执不丢失 |
 | S11 | 复制旧学期模板 | 不复制旧孩子关联、回执或临时调整，要求重新核对 |
 | S12 | 变更发布后函数超时/重试、微信订阅不足 | 当前日程一致，分批幂等恢复，站内有效且微信阻断如实展示 |
+| S13 | 已准备彩纸后仅改上课时间 | stable_event_id 和轮次不变，完成保留且不催；显式更换材料重确认才新轮次 |
+| S14 | 移出家庭读变更告知，随后撤销关联 | 原先仅见本家庭最小结果，撤销后重新鉴权拒绝；不开放新对象私有待办 |
+| S15 | 显式授予课程维护能力后发布/撤销，再撤销委托 | 授权班级内可操作，撤销委托后立即失效 |

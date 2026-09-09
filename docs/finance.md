@@ -1,6 +1,6 @@
 # 费用收取、核对与班内公示
 
-版本 0.3 · 2026-09-08。本模块属于小程序主方案的必需功能；当前仅为文档，未发生实际收费或交易。
+版本 0.6 · 2026-09-10。本模块属于小程序主方案的必需功能；已提供方案文档与模拟原型；正式账务未实现，未发生实际收费或交易。
 
 ## 1. 已确认范围
 
@@ -10,21 +10,21 @@
 
 ## 2. 费用事项（FR-FIN-01）
 
-费用事项可关联通知、活动或采集任务，但保持独立财务状态。字段包括：班级、标题、用途（打扫/布置等）、依据与说明、预算、参与/分摊规则、目标学生、每人金额或差异金额及原因、登记截止、代收负责人、收款方式说明、预计支出、结余处理方式、附件、状态和版本。
+费用事项可关联通知、活动或采集任务，但保持独立财务状态。字段包括：班级、activity_id、owner_id、标题、用途（打扫/布置等）、依据与说明、预算、参与/分摊规则、目标学生、每人金额或差异金额及原因、登记截止、代收负责人、收款方式说明、预计支出、结余处理方式、附件、状态和版本。
 
 首版默认按学生生成分摊项，避免同一孩子的妈妈、爸爸各被收取一次；一人多个孩子则分别分摊。支持金额减免、不参与、金额调整，保存确认依据；不通过删除孩子记录抹掉原分摊。
 
-收费事项状态为 `DRAFT → OPEN → RECONCILING → CLOSED → ARCHIVED`，取消另记 `CANCELLED`。取消事项不抹除已收款，有资金时先明确退款/结转处置并登记结果。
+收费事项状态为 `DRAFT → OPEN → RECONCILING → CLOSED → ARCHIVED`，取消另记 `CANCELLED`。活动取消时停止收费催办，费用项目进入 RECONCILING 并标 cancellation_requested；有资金先核对退款/结转，记录未完成处置。处置完成才转 CANCELLED/CLOSED，不抹除收款或伪造退款。
 
 实际收费依据、参与安排和代收负责人由班级运营方填写，小程序发布或内部复核本身不代表学校批准。
 
 ## 3. 收取与核对（FR-FIN-02）
 
 1. 经办人建立费用事项和分摊明细，复核后发布收款说明，通知目标学生已关联亲属。
-2. 家长在线下或微信转账完成付款，可在小程序对具体孩子/事项点击“提交缴费凭证”，填写金额、时间、方式、备注并上传必要凭证；家委会也可代登记。
-3. 此时状态为“待核对”，不增加已核实实收，不标记已缴完成。
-4. 家委会根据真实收款账户流水核对，录入到账日期、金额、渠道、交易参考信息及对应孩子/事项分配。
-5. 另一位有财务复核权限的管理者确认后入账，更新孩子缴费状态和公示版本。系统管理员也不能复核自己经办的记录。
+2. 家长在线下或微信转账完成付款，可在小程序对具体孩子/事项点击“提交缴费凭证”，填写金额、时间、方式、备注并上传必要凭证；具有 finance.record 的经办人也可代登记，并保留来源。
+3. 自报或凭证申报进入“待核对”，暂停该孩子该事项催款，不增加实收，不标记已缴；经办列表显示负责人及最后同步时间。
+4. 指定经办人根据真实收款账户流水核对，录入到账日期、金额、渠道、交易参考信息及对应孩子/事项分配。
+5. 另一位有财务复核权限的管理者确认后入账，更新孩子最新核实状态、账本修订及公示生成事件；足额即停催。班内公示须按第 7 节另行生成、审核并切换，不能将入账当成公示已发布。系统管理员也不能复核自己经办的记录。
 6. 对不符、重复、无法识别的付款标记待补充/驳回，说明原因，不凭截图自动认定到账。
 
 同一笔付款可分配到多个孩子/事项，所有分配总和不得超过实际核实到账额；剩余部分列“已收待分配”，不能消失或重复分配。重复的真实交易参考号和凭证摘要提示冲突，由复核者判断；数据库以内部收款记录 ID 和入账幂等键保证同一记录不重复入账，不能仅用金额＋日期判断两笔交易相同。
@@ -97,12 +97,14 @@
 
 ## 8. 权限与协作（FR-FIN-07）
 
-系统管理员、老师、家委会委员可在各自管理范围内维护费用事项和账目；具体经办人、复核人需要指定为不同账户，家委会成员承担代收登记工作。普通“管理员账户”不自动获得财务能力，必须单独授予 `finance.record`、`finance.review`、`finance.publish` 或 `finance.read_private`，且仍受班级范围和不得自复核约束。
+系统管理员、老师、家委会委员可在各自管理范围内维护费用事项和公开说明；所有实际记账、复核、公示发布及原始凭证读取均需显式财务职责指派。具体经办人、复核人需要指定为不同账户，家委会成员承担代收登记工作。普通“管理员账户”不自动获得财务能力，必须单独授予 `finance.record`、`finance.review`、`finance.publish` 或 `finance.read_private`，且仍受班级范围和不得自复核约束。
 
 | 动作 | 规则 |
 |---|---|
-| 建立费用事项、登记收款/支出/退款 | 三类管理身份或获授权经办者 |
-| 入账复核与公示发布 | 有对应权限的另一位管理者；经办者不可自复核 |
+| 创建/修改费用说明草稿 | 三类管理身份或 activity.manage 范围内的受托维护者；涉及分摊/收款安排须财务核验后发布 |
+| 分摊调整、登记收款/支出/退款 | 具有对应范围 finance.record 的指定经办者 |
+| 入账复核 | finance.review，且不是原经办人 |
+| 公示审核发布 | finance.publish，且不是相关经办人；可与该笔复核人为同一人，不能因此绕过双人复核 |
 | 已入账更正 | 新增冲正/更正申请，另一人复核，禁止直接覆盖/删除 |
 | 修改代收负责人、收款说明 | 有权管理者修订并复核后公示，通知受影响家庭 |
 | 原始凭证与导出 | 限有财务私有读取权限的范围；班内公示导出只含公开字段 |
@@ -116,7 +118,7 @@
 
 单纯修改分摊规则不会改变已经发生的现金流水；撤销学生关联不会删除其历史缴费；项目取消或归档不会清空账本。
 
-费用通知支持收款说明、公示更新、核对结果和结项，遵循订阅条件与限频。费用核对不得使用普通待办“点完成”作为到账证明。首版不默认对未缴学生自动持续催款；需要提醒时由管理者明确配置，目标仅有效相关亲属，未参与/免缴项不进入催办。公开已缴/未缴不生成羞辱性排名或自动群内点名。
+费用通知支持收款说明、公示更新、核对结果和结项，遵循订阅条件与限频。费用核对不得使用普通待办“点完成”作为到账证明。首版不默认对未缴学生自动持续催款；需要提醒时由有权管理者明确配置，目标仅有效相关亲属，未参与/免缴/已足额核实项不进入催办。手动及自动催款按同一接收人跨所有费用事项/孩子/班级每天最多两次、最小间隔两小时，Asia/Shanghai 计日且不因修订换轮次重置。另受普通外发每日两次和外发总计每日四次、免打扰、订阅限制，允许更少，不能提高上限。文案固定包含“款项同步可能有延迟，如果已交款请忽略。”公开已缴/未缴不生成羞辱性排名或自动群内点名。
 
 ## 10. 费用与 AI（FR-FIN-09）
 
@@ -130,20 +132,36 @@ AI 仅解释已发布公共用途、分摊规则及查看公示的步骤。逐�
 
 | 实体 | 主要字段与约束 |
 |---|---|
-| fee_projects | class_id, linked_task_id, purpose, basis, collector_id, status, version |
+| fee_projects | class_id, activity_id, linked_task_id, owner_id, purpose, basis, collector_id, status, cancellation_requested, ledger_revision, version |
 | fee_assessments | project_id, student_id, amount_fen, participation, adjustment_version；项目学生唯一 |
-| payment_claims | applicant_id, student_id, project_id, declared_amount, proof_id, review_status；申报不入现金账 |
-| cash_records | kind=RECEIPT/REFUND/EXPENSE, amount_fen, actual_at, operator_id, reviewer_id, status, proof_ids, external_reference |
+| payment_claims | applicant_id, student_id, project_id, declared_amount_fen, proof_id可空, source, status, owner_id, updated_at；PENDING/NEEDS_INFO/MATCHED/REJECTED，待核对暂停催款，申报不入现金账 |
+| cash_records | class_id, ledger_revision, kind=RECEIPT/REFUND/EXPENSE, amount_fen, actual_at, operator_id, reviewer_id, status, proof_ids, external_reference |
 | receipt_allocations | receipt_id, project_id, student_id, amount_fen；已分配总额不超过核实到账额 |
 | refund_allocations | refund_id, original_receipt/allocation_id, amount_fen；限制可退余额 |
 | expense_allocations | expense_id, project_id, amount_fen；垫付与实际报销分别记录 |
-| ledger_entries | source_record_id, entry_kind, project_id可空, signed_amount_fen, reversal_of, posted_at；唯一入账键 |
+| ledger_entries | class_id, ledger_revision, source_record_id, entry_kind, project_id可空, signed_amount_fen, reversal_of, posted_at；唯一入账键 |
 | project_transfers | from_project, to_project, amount_fen, reason, reviewer；成对非现金归属变更 |
 | reconciliations | class_id, cutoff, book_amount_fen, verified_actual_fen, difference_fen, explanation, reviewer_id |
-| finance_publications | class_id, project_id, version, cutoff, totals, student_rows, redacted_evidence, publisher_id；不可变快照 |
+| finance_publications | class_id, project_id可空, version, ledger_revision, assessment_version, cutoff, totals, student_rows, redacted_evidence, publisher_id, state；GENERATING/READY/PUBLISHED，发布后不可变 |
+
+全班公示唯一入口由 classes.published_finance_version 指向；单项目视图按该完整快照筛选，不各自切换不同截止版本。
 
 期初资金通过独立复核的 OPENING 条目录入；冲正采用 REVERSAL 关联原条目。项目间分配和结转不能再次进入班级现金收入。核对记录保存其截止快照，不因之后新收款而更改历史差异。
 
 ## 12. 后续在线支付预留
 
 用户已选择线下收款，因此第一版不以商户开通为交付前提。未来接入时增加商户/AppID、支付订单、验签回调、主动查单、退款与对账适配层，仍使用同一账本入账规则。接入要求见[微信支付官方准备说明](https://pay.wechatpay.cn/doc/v3/merchant/4015459512)，不能在未验证前承诺资格或费率。
+
+## 13. 异步收款、催款与交接（FR-FIN-10 / FR-FIN-11）
+
+- 发送前以最新已复核账本、当前分摊和退款调整检查差额，不使用滞后的公示版本决定催款；款项已核实但公示待生成时即停止催款。
+- 家长点击“我已交款，待核对”或提交凭证后，暂停该事项对该孩子家庭的催款；仅列待核对，不能变成已缴或增加余额。经办/复核待处理列表记录负责人、申报时间、最后同步时间；退回且注明理由后才恢复未来允许时点，不补发错过提醒。
+- 微信发送未知结果保守占用当日额度，不能通过重试、换项目或分批绕过两次上限。摘要包含多项催款算一次外发，逐项检查金额/资格，文案不公开其他家庭。
+- 自家详情显示最新申报/核实状态；全班公示显示完整公示版本、截止时点、生成中/待审核状态及最后实际资金核对时间。入账与实际资金对账是不同动作，单笔入账不把整班标成刚完成对账。
+- 批量核对先预览流水匹配、待分配、多缴、重复疑似与异常项；按有界记录逐笔复核，保留失败行和进度。姓名、日期、金额仅提供匹配建议，不自动唯一认定流水。
+- 财务交接包含最新账本、公示版本、实际班费资金、差异、未分配收款、待核验/复核项、待报销和退款/结余处置。差异或未完成工作可以显式由新负责人承接，公示保持“待核对”，不得以交接完成伪造账目已平。
+- 双人职责指派与旧权限撤销纳入交接生效清单；历史经办人、票据及更正链保留。离班家庭仅通过受控本人资料流程取得本家庭缴费证明，不重新开放全班公示。
+
+**FR-FIN-10**：本节催款与同步规则及第 9 节限额、文案共同构成必需需求。**FR-FIN-11**：本节透明交接、私有材料和离班家庭资料规则共同构成必需需求。
+
+验收 F10：同一人多个孩子/项目，手动和自动催款累计达到两次后阻断；已核实未公示、自报待核对均不继续催；每条候选文案包含“如果已交款请忽略”。F11：换届后待核对项与差异明确移交，旧财务权限失效、历史账本不变。
