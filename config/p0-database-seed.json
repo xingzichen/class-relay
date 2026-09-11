@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "syntheticOnly": true,
+  "collections": {
+    "p0_atomic_records": [
+      {
+        "id": "p004_class_a_001",
+        "data": {
+          "class_id": "synthetic_class_a",
+          "version": 1,
+          "status": "PENDING"
+        }
+      },
+      {
+        "id": "p004_class_a_002",
+        "data": {
+          "class_id": "synthetic_class_a",
+          "version": 1,
+          "status": "PENDING"
+        }
+      },
+      {
+        "id": "p004_class_b_001",
+        "data": {
+          "class_id": "synthetic_class_b",
+          "version": 1,
+          "status": "PENDING"
+        }
+      }
+    ],
+    "p0_atomic_events": []
+  },
+  "applyGate": "Verify client read/write denial first; create missing IDs atomically, never overwrite existing records."
+}

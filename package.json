@@ -1,0 +1,39 @@
+{
+  "name": "family-school-coordination",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "npm@10.9.4",
+  "engines": {
+    "node": "22.22.x",
+    "npm": "10.x"
+  },
+  "workspaces": [
+    "packages/*",
+    "functions/*"
+  ],
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "build": "node scripts/build.mjs",
+    "test:unit": "node scripts/test-unit.mjs",
+    "test:unit:coverage": "node scripts/test-unit.mjs --coverage",
+    "test:prototype": "node 原型图/tests/interactions.cjs",
+    "test:integration": "node scripts/not-configured.mjs integration",
+    "test:e2e": "node scripts/not-configured.mjs e2e",
+    "test:ai-eval": "node scripts/not-configured.mjs ai-eval",
+    "check": "node scripts/check.mjs",
+    "test:cloud:p0": "node scripts/verify-p0-cloud.mjs",
+    "plan:db:p0": "node scripts/plan-p0-database.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.2",
+    "esbuild": "0.28.2",
+    "eslint": "10.10.0",
+    "globals": "17.4.0",
+    "miniprogram-api-typings": "5.2.3",
+    "playwright": "1.63.0",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.70.0"
+  }
+}

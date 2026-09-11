@@ -1,0 +1,9 @@
+{
+  "desc": "P0 开发空壳暂不索引",
+  "rules": [
+    {
+      "action": "disallow",
+      "page": "*"
+    }
+  ]
+}

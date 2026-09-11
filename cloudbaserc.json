@@ -1,0 +1,37 @@
+{
+  "envId": "cloud1-d2gndswq6641f6dd6",
+  "functionRoot": "dist/functions",
+  "functions": [
+    {
+      "name": "bootstrap",
+      "runtime": "Nodejs22.21",
+      "handler": "index.main",
+      "timeout": 10,
+      "memorySize": 128
+    },
+    {
+      "name": "p0Identity",
+      "runtime": "Nodejs22.21",
+      "handler": "index.main",
+      "timeout": 10,
+      "memorySize": 256,
+      "installDependency": true,
+      "envVariables": {
+        "MINIPROGRAM_APP_ID": "wx7d14c4114404f835",
+        "CLOUDBASE_ENV_ID": "cloud1-d2gndswq6641f6dd6"
+      }
+    },
+    {
+      "name": "p0Internal",
+      "runtime": "Nodejs22.21",
+      "handler": "index.main",
+      "timeout": 10,
+      "memorySize": 256,
+      "installDependency": true,
+      "envVariables": {
+        "MINIPROGRAM_APP_ID": "wx7d14c4114404f835",
+        "CLOUDBASE_ENV_ID": "cloud1-d2gndswq6641f6dd6"
+      }
+    }
+  ]
+}

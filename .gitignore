@@ -6,3 +6,9 @@ __pycache__/
 .env
 .env.*
 !.env.example
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+project.private.config.json
+config/environments.local.json

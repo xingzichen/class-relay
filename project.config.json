@@ -1,0 +1,13 @@
+{
+  "description": "家校信息协同小程序 P0 工程",
+  "projectname": "family-school-coordination",
+  "appid": "wx7d14c4114404f835",
+  "compileType": "miniprogram",
+  "miniprogramRoot": "dist/miniprogram/",
+  "cloudfunctionRoot": "dist/functions/",
+  "setting": {
+    "es6": true,
+    "minified": true,
+    "urlCheck": true
+  }
+}

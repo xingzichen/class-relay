@@ -1,0 +1,12 @@
+{
+  "node": "22.22.1",
+  "npm": "10.9.4",
+  "cloudbaseCli": "3.8.1",
+  "candidateCloudRuntime": "Nodejs22.21",
+  "cloudRuntimeVerified": false,
+  "wxServerSdk": "4.0.2",
+  "cloudbaseNodeSdk": "3.18.3",
+  "wechatDevTools": "2.02.2608031",
+  "wechatIdeSkill": "0.3.9",
+  "cloudRuntimeVerificationScope": "Nodejs22.21 verified only in previous Tencent environment; current WeChat console and IDE readback disagree"
+}

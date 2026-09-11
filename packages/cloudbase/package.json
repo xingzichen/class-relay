@@ -1,0 +1,7 @@
+{
+  "name": "@family/cloudbase",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": { "@cloudbase/node-sdk": "3.18.3" }
+}

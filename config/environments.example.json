@@ -1,0 +1,10 @@
+{
+  "development": {
+    "appId": "<WECHAT_APP_ID>",
+    "envId": "<DEVELOPMENT_ENV_ID>"
+  },
+  "production": {
+    "appId": "<WECHAT_APP_ID>",
+    "envId": "<PRODUCTION_ENV_ID>"
+  }
+}

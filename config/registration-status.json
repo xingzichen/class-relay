@@ -1,0 +1,8 @@
+{
+  "status": "wechat-cloud-associated",
+  "subjectType": "individual",
+  "testAccountEnabled": false,
+  "reason": "WeChat IDE lists the new environment and its empty NoSQL collections successfully",
+  "appId": "wx7d14c4114404f835",
+  "envId": "cloud1-d2gndswq6641f6dd6"
+}
