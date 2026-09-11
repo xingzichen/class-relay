@@ -4,7 +4,7 @@
 
 产品聚焦通知、作业要求、准备事项、公共解答、待办和日常安排等可复用场景，不承接反馈工单、冲突处理或敏感个案。
 
-当前交付为方案文档及交互原型；原型使用虚构数据和本地模拟交互，尚未实现或部署正式小程序。需求基线：0.6 · 2026-09-10；评审建议已采纳，相关文档已全面对齐。
+当前已交付方案文档、交互原型、原生小程序工程骨架与共享契约。P0-01/P0-02 已验收；新环境身份探针及诊断均已部署，真实调用仍因附加字段和无效预期配置未验收；运行时控制台与 IDE 回读不一致，待核验。P0-04 事务适配层和初始化预览本地通过，整包仍未验收。需求基线：0.6 · 2026-09-10。
 
 - [方案文档入口](docs/README.md)
 - [产品需求](docs/requirements.md)
@@ -13,13 +13,33 @@
 - [腾讯云 AI 能力与实施设计](docs/ai-cloudbase-design.md)
 - [课程表、值日表与临时调整](docs/schedules.md)
 - [腾讯云能力评估](docs/cloudbase-capability-assessment.md)
+- [本地开发环境与腾讯云准备手册](docs/development-environment-and-tencent-cloud-setup.md)
 - [技术架构](docs/technical-architecture.md)
 - [费用收取与公示](docs/finance.md)
 - [数据模型与状态](docs/data-model.md)
 - [可行性与平台验证](docs/feasibility-analysis.md)
 - [实施计划与验收](docs/implementation-plan.md)
+- [细分开发计划（69 个开发包、单元测试与阶段验证）](docs/development-plan.md)
+- [逐任务开发提示词（69 段，可独立复制）](docs/development-prompts.md)
 - [决策与待确认项](docs/decisions.md)
 - [Web 交互原型](原型图/index.html)（[本地打开说明](原型图/README.md)）
+
+## 开发与验证
+
+```sh
+npm ci
+npm run check
+# 仅在指定开发云环境运行管理侧验证
+npm run test:cloud:p0
+```
+
+正式 AppID `wx7d14c4114404f835` 与新环境 `cloud1-d2gndswq6641f6dd6` 已关联，本地配置已同步。44 项单元测试和完整 check 通过；当前无待确认的部署。新环境管理走微信开发者工具，现有 tcb 腾讯云账号无该环境权限；云端剩余问题见 [P0-03 记录](tests/verification/P0-03.md)。
+
+- [任务与测试映射](tests/task-map.json)
+- [P0-01 工程验收](tests/verification/P0-01.md)
+- [P0-02 契约验收](tests/verification/P0-02.md)
+- [P0-03 云端证据与当前阻塞](tests/verification/P0-03.md)
+- [P0-04 事务适配层与待验证项](tests/verification/P0-04.md)
 
 ## 备选方案
 

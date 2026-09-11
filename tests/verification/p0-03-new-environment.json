@@ -1,0 +1,78 @@
+{
+  "task": "P0-03",
+  "scope": "wechat-management-readiness",
+  "checkedAt": "2026-09-10T20:49:01.801278+00:00",
+  "appId": "wx7d14c4114404f835",
+  "envId": "cloud1-d2gndswq6641f6dd6",
+  "associated": true,
+  "databaseType": "NoSQL",
+  "collections": [],
+  "collectionsRequestId": "925228de-153a-4a7f-88c2-030f4600440c",
+  "functions": [
+    {
+      "name": "p0Identity",
+      "status": "Active",
+      "runtime": "Nodejs16.13",
+      "timeout": 3
+    }
+  ],
+  "tcbAccountCanManage": false,
+  "pendingTask": null,
+  "nativeIdentityAccepted": false,
+  "initialDeployment": {
+    "status": "success",
+    "taskId": "confirmation_cloud_fn_deploy_a07d8ae5-f571-4dce-a832-e6ce40d470a4",
+    "filesCount": 5862,
+    "packSize": "6.7 MB"
+  },
+  "nativeCall": {
+    "requestId": "p003-diagnostics-1789099783182",
+    "reachedFunction": true,
+    "ok": false,
+    "returnedRequestId": "invalid-request",
+    "errorCode": "INVALID_REQUEST",
+    "diagnostics": {
+      "event": {
+        "kind": "object",
+        "plainRecord": true,
+        "fieldCount": 5,
+        "unexpectedFields": 1,
+        "actionType": "string",
+        "payloadType": "object",
+        "requestIdType": "string",
+        "userInfoPresent": true
+      },
+      "configuration": {
+        "appIdValid": false,
+        "envIdValid": false
+      },
+      "context": {
+        "kind": "object",
+        "plainRecord": true,
+        "namespaceMatches": false,
+        "environmentType": "string",
+        "environType": "string"
+      }
+    }
+  },
+  "configurationVerification": "Both expected config values fail format checks in the actual invoked function; console/runtime discrepancy remains unresolved",
+  "updatedAt": "2026-09-11T04:11:59.837482+00:00",
+  "userinfoUpdate": {
+    "status": "success",
+    "taskId": "confirmation_cloud_fn_inc_deploy_c493221c-3d00-421c-a08b-3fb13e149ba8",
+    "filesCount": 1,
+    "packSize": "2.6 KB"
+  },
+  "diagnosticsDeployment": {
+    "status": "success",
+    "taskId": "confirmation_cloud_fn_inc_deploy_2498edcc-f7b5-428d-9bdf-5e7291cfc353",
+    "filesCount": 1,
+    "packSize": "2.9 KB"
+  },
+  "runtimeEvidence": {
+    "userReportedConsole": "Node.js 22.21 (public preview)",
+    "wechatIdeReadback": "Nodejs16.13",
+    "wechatIdeTimeoutSeconds": 3,
+    "agreement": false
+  }
+}

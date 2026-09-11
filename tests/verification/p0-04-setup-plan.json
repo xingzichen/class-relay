@@ -1,0 +1,76 @@
+{
+  "mode": "preview-only",
+  "schemaVersion": 1,
+  "envId": "cloud1-d2gndswq6641f6dd6",
+  "appId": "wx7d14c4114404f835",
+  "observedAt": "2026-09-10T20:49:01.801278+00:00",
+  "sourceRequestId": "925228de-153a-4a7f-88c2-030f4600440c",
+  "operations": [
+    {
+      "kind": "createCollection",
+      "collection": "p0_atomic_records"
+    },
+    {
+      "kind": "denyClientAccess",
+      "collection": "p0_atomic_records",
+      "permissions": {
+        "read": false,
+        "write": false
+      }
+    },
+    {
+      "kind": "createIndex",
+      "collection": "p0_atomic_records",
+      "index": {
+        "name": "class_status_id",
+        "unique": false,
+        "keys": [
+          {
+            "field": "class_id",
+            "direction": 1
+          },
+          {
+            "field": "status",
+            "direction": 1
+          },
+          {
+            "field": "_id",
+            "direction": 1
+          }
+        ]
+      }
+    },
+    {
+      "kind": "createCollection",
+      "collection": "p0_atomic_events"
+    },
+    {
+      "kind": "denyClientAccess",
+      "collection": "p0_atomic_events",
+      "permissions": {
+        "read": false,
+        "write": false
+      }
+    },
+    {
+      "kind": "createIndex",
+      "collection": "p0_atomic_events",
+      "index": {
+        "name": "run_id_document_id",
+        "unique": false,
+        "keys": [
+          {
+            "field": "run_id",
+            "direction": 1
+          },
+          {
+            "field": "_id",
+            "direction": 1
+          }
+        ]
+      }
+    }
+  ],
+  "requiresFreshReadBeforeApply": true,
+  "dataWriteGate": "Client read/write denial must be applied and verified before seeding; permission tooling must be confirmed separately."
+}

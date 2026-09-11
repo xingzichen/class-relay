@@ -1,0 +1,39 @@
+{
+  "task": "P0-03",
+  "scope": "management-plane-only",
+  "identityConfigured": true,
+  "executedAt": "2026-09-10T15:58:35.308Z",
+  "envId": "class-raley-d8gn0mi3t2e5dbf9f",
+  "checks": [
+    {
+      "name": "p0Identity: Active / Event / Nodejs22.21 / development",
+      "passed": true,
+      "platformRequestId": "8eddf144-6eab-4f31-9000-81c25a23ddca"
+    },
+    {
+      "name": "p0Internal: Active / Event / Nodejs22.21 / development",
+      "passed": true,
+      "platformRequestId": "549aa818-008a-4183-a6f4-2f960f218c45"
+    },
+    {
+      "name": "internal client permission is false",
+      "passed": true,
+      "platformRequestId": "ae1af326-4dd2-4379-b3ee-2ac27e320710"
+    },
+    {
+      "name": "management invocation cannot impersonate WeChat",
+      "passed": true,
+      "platformRequestId": "9a6900b3-6e67-40a1-b5b4-04a67181e883"
+    },
+    {
+      "name": "forged caller fields rejected on cloud",
+      "passed": true,
+      "platformRequestId": "48cad89a-d0c5-4deb-961c-1697b7fcfa96"
+    },
+    {
+      "name": "internal marker reachable with management credentials",
+      "passed": true,
+      "platformRequestId": "640cfefe-506a-4e91-a89d-a663f6f69bac"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "P0-01": {
+    "status": "accepted",
+    "unit": [
+      "tests/unit/config.test.ts",
+      "tests/unit/cloud-client.test.ts",
+      "tests/unit/bootstrap.test.ts"
+    ],
+    "verification": "tests/verification/P0-01.md"
+  },
+  "P0-02": {
+    "status": "accepted",
+    "unit": [
+      "tests/unit/contracts.test.ts",
+      "tests/unit/domain.test.ts"
+    ],
+    "verification": "tests/verification/P0-02.md"
+  },
+  "P0-03": {
+    "status": "environment-blocked",
+    "unit": [
+      "tests/unit/identity-probe.test.ts"
+    ],
+    "management": "npm run test:cloud:p0",
+    "wechat": "tests/integration/p0-03.wechat.js",
+    "verification": "tests/verification/P0-03.md",
+    "blocker": "Diagnostics deployed and collected: one unknown envelope field and invalid expected configuration; console reports Nodejs22.21 but IDE readback Nodejs16.13",
+    "readiness": "tests/verification/p0-03-new-environment.json"
+  },
+  "P0-04": {
+    "status": "in-development",
+    "unit": [
+      "tests/unit/atomic-batch.test.ts",
+      "tests/unit/database-setup.test.ts"
+    ],
+    "verification": "tests/verification/P0-04.md",
+    "remaining": [
+      "Versioned collections/indexes/security/seed scripts",
+      "Real database concurrency, rollback, pagination and measured capacity",
+      "Direct WeChat client read/write denial"
+    ],
+    "preview": "npm run plan:db:p0 -- tests/verification/p0-03-new-environment.json"
+  }
+}
